@@ -1,4 +1,4 @@
-import { Box, Button, Center, Container, Heading, Stack, Text } from '@chakra-ui/react'
+import { Button, Center, Container, Heading, Stack, Text } from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,10 +19,16 @@ export const Home = () => {
                             colorScheme="primary"
                             variant="solid"
                             size="lg"
-                            leftIcon={<ArrowForwardIcon />}
+                            rightIcon={<ArrowForwardIcon />}
                         >
                             Create template
                         </Button>
+                        <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
+                            or
+                        </Text>
+                        <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
+                            Choose our best templates
+                        </Text>
                     </Stack>
                 </Center>
             </Container>

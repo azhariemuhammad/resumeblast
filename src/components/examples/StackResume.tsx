@@ -51,7 +51,7 @@ const PersonalInfo = ({ data, styles }) => {
     }
 
     return (
-        <Grid templateColumns="repeat(10, 1fr)" gap={4}>
+        <Grid templateColumns="repeat(10, 1fr)" gap={4} gridAutoFlow="row">
             <GridItem colSpan={4} alignSelf="flex-start">
                 <Heading as="h2" size="md">
                     Details
@@ -186,46 +186,49 @@ type StackResumeProps = {
     data: Resume
     onAddSection: (title: string) => void
     layout: { component: React.ReactNode; title: string }[]
+    hide?: boolean
 }
 
-const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout }) => {
+const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout, hide = false, onRemoveSection }) => {
     return (
-        <Box maxW="1200px" w="full" margin="auto" padding={8} boxShadow="md" borderRadius="md" bg="white">
+        <>
             <Header data={data} />
             <VStack align="stretch" spacing={6}>
                 {layout.map((section, index) => (
                     <Fragment key={index}>
-                        <StyleControlWrapper>
+                        <StyleControlWrapper onRemoveSection={() => onRemoveSection(section.title)}>
                             {React.createElement(componentMap[section.title], { data })}
                         </StyleControlWrapper>
                     </Fragment>
                 ))}
-                <Box
-                    borderStyle="dashed"
-                    borderWidth="1px"
-                    borderColor="primary.500"
-                    p={4}
-                    rounded="md"
-                    height="200px"
-                    textAlign="center"
-                    alignContent="center"
-                    _hover={{ borderColor: 'primary.8   00' }}
-                >
-                    <Menu>
-                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                            Add new section
-                        </MenuButton>
-                        <MenuList>
-                            {sectionItems.map(({ title }, index) => (
-                                <MenuItem key={index} onClick={() => onAddSection(title)}>
-                                    {title}
-                                </MenuItem>
-                            ))}
-                        </MenuList>
-                    </Menu>
-                </Box>
+                {hide && (
+                    <Box
+                        borderStyle="dashed"
+                        borderWidth="1px"
+                        borderColor="primary.500"
+                        p={4}
+                        rounded="md"
+                        height="200px"
+                        textAlign="center"
+                        alignContent="center"
+                        _hover={{ borderColor: 'primary.8   00' }}
+                    >
+                        <Menu>
+                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                Add new section
+                            </MenuButton>
+                            <MenuList>
+                                {sectionItems.map(({ title }, index) => (
+                                    <MenuItem key={index} onClick={() => onAddSection(title)}>
+                                        {title}
+                                    </MenuItem>
+                                ))}
+                            </MenuList>
+                        </Menu>
+                    </Box>
+                )}
             </VStack>
-        </Box>
+        </>
     )
 }
 

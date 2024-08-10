@@ -1,3 +1,4 @@
+import { DeleteIcon } from '@chakra-ui/icons'
 import {
     Box,
     Popover,
@@ -8,19 +9,28 @@ import {
     Input,
     Select,
     HStack,
-    VStack
+    VStack,
+    Button,
+    IconButton
 } from '@chakra-ui/react'
 import React, { useState } from 'react'
 
 type StyleControlWrapperProps = {
     children: React.ReactNode
+    onRemoveSection: () => void
 }
 
-const StyleControls = ({ styles, onStyleChange }) => {
+type StyleControlsProps = {
+    styles: any
+    onStyleChange: (property: string, value: string) => void
+    onRemoveSection: () => void
+}
+
+const StyleControls = ({ styles, onStyleChange, onRemoveSection }: StyleControlsProps) => {
     return (
-        <HStack align="stretch" spacing={4} w="full">
-            <VStack w="full">
-                <FormLabel htmlFor="fontSize" fontSize="xs">
+        <HStack align="stretch" spacing={2} w="full" rounded="md">
+            <VStack w="full" spacing={1}>
+                <FormLabel htmlFor="fontSize" fontSize="xs" m={0}>
                     Font Size:
                 </FormLabel>
                 <Select
@@ -34,8 +44,8 @@ const StyleControls = ({ styles, onStyleChange }) => {
                     <option value="lg">Large</option>
                 </Select>
             </VStack>
-            <VStack w="full">
-                <FormLabel fontSize="xs" htmlFor="fontColor">
+            <VStack w="full" spacing={1}>
+                <FormLabel fontSize="xs" htmlFor="fontColor" m={0}>
                     Font Color:
                 </FormLabel>
                 <Input
@@ -46,13 +56,13 @@ const StyleControls = ({ styles, onStyleChange }) => {
                     onChange={e => onStyleChange('color', e.target.value)}
                 />
             </VStack>
-            <VStack w="full">
-                <FormLabel htmlFor="fontFamily" fontSize="xs">
+            <VStack w="full" spacing={1}>
+                <FormLabel htmlFor="fontFamily" fontSize="xs" m={0}>
                     Typeface:
                 </FormLabel>
                 <Select
                     size="sm"
-                    w="fit-content"
+                    w="100%"
                     id="fontFamily"
                     value={styles.fontFamily}
                     onChange={e => onStyleChange('fontFamily', e.target.value)}
@@ -65,11 +75,20 @@ const StyleControls = ({ styles, onStyleChange }) => {
                     <option value="'Roboto', sans-serif">Roboto</option>
                 </Select>
             </VStack>
+            <VStack w="full" spacing={1} justifyContent="center">
+                <IconButton
+                    size="md"
+                    variant="ghost"
+                    aria-label="Add Section"
+                    icon={<DeleteIcon color="primary.500" />}
+                    onClick={onRemoveSection}
+                />
+            </VStack>
         </HStack>
     )
 }
 
-export const StyleControlWrapper = ({ children }: StyleControlWrapperProps) => {
+export const StyleControlWrapper = ({ children, onRemoveSection }: StyleControlWrapperProps) => {
     const [styles, setStyles] = useState({
         fontSize: 'md',
         color: '#000000',
@@ -94,9 +113,13 @@ export const StyleControlWrapper = ({ children }: StyleControlWrapperProps) => {
                     {React.Children.map(children, child => React.cloneElement(child, { styles }))}
                 </Box>
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent p={0} bg="gray.50">
                 <PopoverBody>
-                    <StyleControls styles={styles} onStyleChange={handleStyleChange} />
+                    <StyleControls
+                        styles={styles}
+                        onStyleChange={handleStyleChange}
+                        onRemoveSection={onRemoveSection}
+                    />
                 </PopoverBody>
             </PopoverContent>
         </Popover>
