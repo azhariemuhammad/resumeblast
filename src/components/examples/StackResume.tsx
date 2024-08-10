@@ -21,6 +21,7 @@ import { Resume } from '../../types'
 import { format } from 'date-fns'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { sectionItems } from '../shared'
+import { StyleControlWrapper } from '../StyleController'
 
 const Header = ({ data }) => {
     return (
@@ -42,23 +43,29 @@ const Header = ({ data }) => {
     )
 }
 
-const PersonalInfo = ({ data }) => {
+const PersonalInfo = ({ data, styles }) => {
+    const textStyles = {
+        fontSize: styles.fontSize,
+        color: styles.color,
+        fontFamily: styles.fontFamily
+    }
+
     return (
         <Grid templateColumns="repeat(10, 1fr)" gap={4}>
             <GridItem colSpan={4} alignSelf="flex-start">
                 <Heading as="h2" size="md">
                     Details
                 </Heading>
-                <Text>{data.phoneNumber}</Text>
-                <Text>{data.email}</Text>
-                <Text>{data.address}</Text>
-                <Text>{data.linkedin}</Text>
+                <Text {...textStyles}>{data.phoneNumber}</Text>
+                <Text {...textStyles}>{data.email}</Text>
+                <Text {...textStyles}>{data.address}</Text>
+                <Text {...textStyles}>{data.linkedin}</Text>
             </GridItem>
             <GridItem colSpan={6} alignSelf="flex-start">
                 <Heading as="h2" size="md">
                     Profile
                 </Heading>
-                <Text w="full" whiteSpace="pre-wrap">
+                <Text w="full" whiteSpace="pre-wrap" {...textStyles}>
                     {data.description}
                 </Text>
             </GridItem>
@@ -66,7 +73,13 @@ const PersonalInfo = ({ data }) => {
     )
 }
 
-const Experiences = ({ data }) => {
+const Experiences = ({ data, styles }) => {
+    const textStyles = {
+        fontSize: styles.fontSize,
+        color: styles.color,
+        fontFamily: styles.fontFamily
+    }
+
     return (
         <VStack spacing={4} alignItems="flex-start">
             <Heading as="h2" size="md">
@@ -84,7 +97,7 @@ const Experiences = ({ data }) => {
                         <Text fontWeight="bold">{exp.title}</Text>
                         <Text fontWeight="medium">{exp.company}</Text>
                         <Text fontStyle="italic">{exp.location}</Text>
-                        <Text>{exp.description}</Text>
+                        <Text {...textStyles}>{exp.description}</Text>
                     </GridItem>
                 </Grid>
             ))}
@@ -176,13 +189,16 @@ type StackResumeProps = {
 }
 
 const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout }) => {
-    console.log({ layout })
     return (
         <Box maxW="1200px" w="full" margin="auto" padding={8} boxShadow="md" borderRadius="md" bg="white">
             <Header data={data} />
             <VStack align="stretch" spacing={6}>
                 {layout.map((section, index) => (
-                    <Fragment key={index}>{React.createElement(componentMap[section.title], { data })}</Fragment>
+                    <Fragment key={index}>
+                        <StyleControlWrapper>
+                            {React.createElement(componentMap[section.title], { data })}
+                        </StyleControlWrapper>
+                    </Fragment>
                 ))}
                 <Box
                     borderStyle="dashed"
