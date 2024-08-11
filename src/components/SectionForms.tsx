@@ -1,12 +1,10 @@
-import { Box, FormControl, FormLabel, Grid, HStack, Input, Textarea, VStack } from '@chakra-ui/react'
-import { Resume } from '../types'
-import exp from 'constants'
+import { FormControl, FormLabel, Grid, Input, Textarea, VStack } from '@chakra-ui/react'
 import { useFormikContext } from 'formik'
 import { useDebounce } from '../hooks/useDebounce'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 
 export const PersonalInfoInput = ({ onSave }) => {
-    const { values, submitForm, handleChange, ...rest } = useFormikContext()
+    const { values, submitForm, handleChange } = useFormikContext()
 
     const debouncedValues = useDebounce(values, 500)
 
@@ -95,6 +93,7 @@ export const PersonalInfoInput = ({ onSave }) => {
 export const ExperienceInput = ({ onSave }) => {
     const { values, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+    console.log(values)
 
     useEffect(() => {
         onSave(debouncedValues)
@@ -103,7 +102,7 @@ export const ExperienceInput = ({ onSave }) => {
     return (
         <VStack gap={8} w="full">
             {values.experiences.map((exp, index) => (
-                <Grid templateColumns="repeat(2, 1fr)" gap={2} w="full">
+                <Grid templateColumns="repeat(2, 1fr)" gap={2} w="full" key={index}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
                             Title
@@ -124,7 +123,7 @@ export const ExperienceInput = ({ onSave }) => {
                             defaultValue={exp.company}
                             onChange={handleChange}
                             type="text"
-                            name="company"
+                            name={`experiences.${index}.company`}
                             placeholder="Company"
                         />
                     </FormControl>
@@ -136,7 +135,7 @@ export const ExperienceInput = ({ onSave }) => {
                             onChange={handleChange}
                             defaultValue={exp.location}
                             type="text"
-                            name="location"
+                            name={`experiences.${index}.location`}
                             placeholder="Location"
                         />
                     </FormControl>
@@ -148,7 +147,7 @@ export const ExperienceInput = ({ onSave }) => {
                             onChange={handleChange}
                             defaultValue={exp.startDate}
                             type="date"
-                            name="startDate"
+                            name={`experiences.${index}.startDate`}
                             placeholder="Start Date"
                         />
                     </FormControl>
@@ -160,7 +159,7 @@ export const ExperienceInput = ({ onSave }) => {
                             onChange={handleChange}
                             defaultValue={exp.endDate}
                             type="date"
-                            name="endDate"
+                            name={`experiences.${index}.endDate`}
                             placeholder="End Date"
                         />
                     </FormControl>
@@ -171,7 +170,7 @@ export const ExperienceInput = ({ onSave }) => {
                         <Textarea
                             onChange={handleChange}
                             defaultValue={exp.description}
-                            name="description"
+                            name={`experiences.${index}.description`}
                             placeholder="Description"
                         />
                     </FormControl>

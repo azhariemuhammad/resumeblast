@@ -1,4 +1,16 @@
-import { Box, Button, Flex, Grid, GridItem, HStack } from '@chakra-ui/react'
+import {
+    Box,
+    Button,
+    Flex,
+    Grid,
+    GridItem,
+    HStack,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    VStack
+} from '@chakra-ui/react'
 import StackResume from './examples/StackResume'
 
 import { ResumeBuilder } from './ResumeBuilder'
@@ -9,7 +21,9 @@ import React, { Fragment, forwardRef, useEffect, useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
 import { Resume } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
-import { ArrowRightIcon, ViewIcon } from '@chakra-ui/icons'
+import { ArrowRightIcon, ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
+import { Watermark, useWatermark } from './Watermark'
+import { sectionItems } from './shared'
 
 type SectionTitle = 'Personal Info' | 'Experiences' | 'Education' | 'Skills' | 'Certifications'
 
@@ -27,11 +41,6 @@ export const GridTwoLayout = () => {
     )
 }
 
-type StackLayoutProps = {
-    onAddSection: (title: string) => void
-    layout: { component: React.ReactNode; title: string }[]
-}
-
 type EditorLayoutProps = {
     children?: React.ReactNode
     colomns?: number
@@ -44,6 +53,7 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
         setDraft(draft)
     }
     const ref = useRef<HTMLDivElement>(null)
+    const { applyWatermark, removeWatermark } = useWatermark(ref)
 
     const onAddSection = (title: string) => {
         let component: React.ReactNode
@@ -91,11 +101,19 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
             </GridItem>
             <GridItem colSpan={6}>
                 <Flex justifyContent="space-between" mb={4}>
-                    <Button variant="outline" rightIcon={<ViewIcon />} onClick={() => console.log('preview')}>
-                        Preview
-                    </Button>
                     <HStack>
-                        <Button variant="outline" onClick={() => console.log('save')}>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            rightIcon={<ViewIcon />}
+                            onClick={() => console.log('preview')}
+                        >
+                            Preview
+                        </Button>
+                        <Watermark applyWatermark={applyWatermark} removeWatermark={removeWatermark} />
+                    </HStack>
+                    <HStack>
+                        <Button variant="outline" onClick={() => console.log('save')} size="sm">
                             Save
                         </Button>
                         <SaveAsPdfButton
@@ -106,17 +124,43 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
                     </HStack>
                 </Flex>
                 <Box maxW="1200px" w="full" margin="auto" boxShadow="md" borderRadius="md" bg="white">
-                    <Box ref={ref} padding={8}>
+                    <VStack ref={ref} padding={8}>
                         {colomns === 1 && (
                             <StackResume
                                 data={draft}
                                 onAddSection={onAddSection}
                                 layout={layout}
-                                hide={!hover}
                                 onRemoveSection={onRemoveSection}
                             />
                         )}
-                    </Box>
+                    </VStack>
+                    {!hover && (
+                        <Box
+                            borderStyle="dashed"
+                            borderWidth="1px"
+                            borderColor="primary.500"
+                            p={4}
+                            rounded="md"
+                            height="200px"
+                            textAlign="center"
+                            alignContent="center"
+                            _hover={{ borderColor: 'primary.8   00' }}
+                            w="full"
+                        >
+                            <Menu>
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                    Add new section
+                                </MenuButton>
+                                <MenuList>
+                                    {sectionItems.map(({ title }, index) => (
+                                        <MenuItem key={index} onClick={() => onAddSection(title)}>
+                                            {title}
+                                        </MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Menu>
+                        </Box>
+                    )}
                 </Box>
             </GridItem>
         </Grid>

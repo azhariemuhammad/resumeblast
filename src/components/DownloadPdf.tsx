@@ -14,7 +14,7 @@ export const SaveAsPdfButton = forwardRef<HTMLButtonElement, SaveAsPdfButtonProp
     })
 
     return (
-        <Button onClick={handlePrint} onMouseEnter={props.onHover} onMouseLeave={props.onMouseLeave}>
+        <Button size="sm" onClick={handlePrint} onMouseEnter={props.onHover} onMouseLeave={props.onMouseLeave}>
             Save as PDF
         </Button>
     )

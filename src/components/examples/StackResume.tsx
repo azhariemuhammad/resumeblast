@@ -187,6 +187,7 @@ type StackResumeProps = {
     onAddSection: (title: string) => void
     layout: { component: React.ReactNode; title: string }[]
     hide?: boolean
+    onRemoveSection: (title: string) => void
 }
 
 const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout, hide = false, onRemoveSection }) => {
@@ -201,32 +202,6 @@ const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout, h
                         </StyleControlWrapper>
                     </Fragment>
                 ))}
-                {hide && (
-                    <Box
-                        borderStyle="dashed"
-                        borderWidth="1px"
-                        borderColor="primary.500"
-                        p={4}
-                        rounded="md"
-                        height="200px"
-                        textAlign="center"
-                        alignContent="center"
-                        _hover={{ borderColor: 'primary.8   00' }}
-                    >
-                        <Menu>
-                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                                Add new section
-                            </MenuButton>
-                            <MenuList>
-                                {sectionItems.map(({ title }, index) => (
-                                    <MenuItem key={index} onClick={() => onAddSection(title)}>
-                                        {title}
-                                    </MenuItem>
-                                ))}
-                            </MenuList>
-                        </Menu>
-                    </Box>
-                )}
             </VStack>
         </>
     )
