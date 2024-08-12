@@ -86,7 +86,7 @@ export const Watermark = ({ applyWatermark, removeWatermark }: WatermarkProps) =
 
     return (
         <>
-            <Button ref={btnRef} size="sm" variant="outline" onClick={onOpen}>
+            <Button ref={btnRef} size="sm" variant="ghost" color="text.secondary" onClick={onOpen}>
                 Watermark
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -127,7 +127,7 @@ export const Watermark = ({ applyWatermark, removeWatermark }: WatermarkProps) =
                                 <FormLabel htmlFor="fontFamily" fontSize="sm" m={0}>
                                     Opacity
                                 </FormLabel>
-                                <Flex alignItems="start" gap={2} w="full" justifyContent="center" alignItems="center">
+                                <Flex gap={2} w="full" justifyContent="center" alignItems="center">
                                     <Slider
                                         aria-label="slider-ex-1"
                                         defaultValue={0.3}

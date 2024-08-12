@@ -24,6 +24,7 @@ import { SaveAsPdfButton } from './DownloadPdf'
 import { ArrowRightIcon, ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
 import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
+import { useNavigate } from 'react-router-dom'
 
 type SectionTitle = 'Personal Info' | 'Experiences' | 'Education' | 'Skills' | 'Certifications'
 
@@ -49,6 +50,7 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
     const [hover, setHover] = useState(false)
     const [layout, setLayout] = useAtom(layoutAtom)
     const [draft, setDraft] = useAtom(draftAtom)
+    const navigate = useNavigate()
     const handleSave = (draft: Resume) => {
         setDraft(draft)
     }
@@ -77,7 +79,6 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
         }
 
         const newLayout = [...layout, { component, title }]
-        console.log(newLayout)
         setLayout(newLayout)
     }
 
@@ -106,14 +107,14 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
                             size="sm"
                             variant="outline"
                             rightIcon={<ViewIcon />}
-                            onClick={() => console.log('preview')}
+                            onClick={() => navigate('/preview?template=stack')}
                         >
                             Preview
                         </Button>
                         <Watermark applyWatermark={applyWatermark} removeWatermark={removeWatermark} />
                     </HStack>
                     <HStack>
-                        <Button variant="outline" onClick={() => console.log('save')} size="sm">
+                        <Button variant="ghost" onClick={() => console.log('save')} size="sm">
                             Save
                         </Button>
                         <SaveAsPdfButton
@@ -123,7 +124,14 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
                         />
                     </HStack>
                 </Flex>
-                <Box maxW="1200px" w="full" margin="auto" boxShadow="md" borderRadius="md" bg="white">
+                <Box
+                    maxW="1200px"
+                    w="full"
+                    margin="auto"
+                    boxShadow="rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;"
+                    borderRadius="md"
+                    bg="white"
+                >
                     <VStack ref={ref} padding={8}>
                         {colomns === 1 && (
                             <StackResume

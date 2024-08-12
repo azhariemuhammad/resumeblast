@@ -18,6 +18,7 @@ import React, { useState } from 'react'
 type StyleControlWrapperProps = {
     children: React.ReactNode
     onRemoveSection: () => void
+    disabled?: boolean
 }
 
 type StyleControlsProps = {
@@ -88,7 +89,7 @@ const StyleControls = ({ styles, onStyleChange, onRemoveSection }: StyleControls
     )
 }
 
-export const StyleControlWrapper = ({ children, onRemoveSection }: StyleControlWrapperProps) => {
+export const StyleControlWrapper = ({ children, onRemoveSection, disabled }: StyleControlWrapperProps) => {
     const [styles, setStyles] = useState({
         fontSize: 'md',
         color: '#000000',
@@ -103,25 +104,31 @@ export const StyleControlWrapper = ({ children, onRemoveSection }: StyleControlW
     }
 
     return (
-        <Popover trigger="hover" placement="top-end">
-            <PopoverTrigger>
-                <Box
-                    border="1px solid transparent"
-                    _hover={{ border: '1px solid', borderColor: 'primary.200' }}
-                    transition="border-color 0.2s"
-                >
-                    {React.Children.map(children, child => React.cloneElement(child, { styles }))}
-                </Box>
-            </PopoverTrigger>
-            <PopoverContent p={0} bg="gray.50">
-                <PopoverBody>
-                    <StyleControls
-                        styles={styles}
-                        onStyleChange={handleStyleChange}
-                        onRemoveSection={onRemoveSection}
-                    />
-                </PopoverBody>
-            </PopoverContent>
-        </Popover>
+        <>
+            {!disabled ? (
+                <Popover trigger="hover" placement="top-end">
+                    <PopoverTrigger>
+                        <Box
+                            border="1px solid transparent"
+                            _hover={{ border: '1px solid', borderColor: 'primary.200' }}
+                            transition="border-color 0.2s"
+                        >
+                            {React.Children.map(children, child => React.cloneElement(child, { styles }))}
+                        </Box>
+                    </PopoverTrigger>
+                    <PopoverContent p={0} bg="gray.50">
+                        <PopoverBody>
+                            <StyleControls
+                                styles={styles}
+                                onStyleChange={handleStyleChange}
+                                onRemoveSection={onRemoveSection}
+                            />
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+            ) : (
+                <Box>{React.Children.map(children, child => React.cloneElement(child, { styles }))}</Box>
+            )}
+        </>
     )
 }

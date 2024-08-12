@@ -1,12 +1,9 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Box, Text, Flex, Button, Link } from '@chakra-ui/react'
+import React from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 function Layout() {
-    return (
-        <div>
-            <Outlet />
-        </div>
-    );
+    return <Outlet />
 }
 
-export default Layout;
+export default Layout

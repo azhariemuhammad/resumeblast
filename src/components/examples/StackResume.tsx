@@ -184,20 +184,19 @@ const componentMap: ComponentMap = {
 
 type StackResumeProps = {
     data: Resume
-    onAddSection: (title: string) => void
     layout: { component: React.ReactNode; title: string }[]
-    hide?: boolean
-    onRemoveSection: (title: string) => void
+    onRemoveSection?: (title: string) => void
+    disabled?: boolean
 }
 
-const StackResume: React.FC<StackResumeProps> = ({ data, onAddSection, layout, hide = false, onRemoveSection }) => {
+const StackResume: React.FC<StackResumeProps> = ({ data, layout, disabled = false, onRemoveSection }) => {
     return (
         <>
             <Header data={data} />
             <VStack align="stretch" spacing={6}>
                 {layout.map((section, index) => (
                     <Fragment key={index}>
-                        <StyleControlWrapper onRemoveSection={() => onRemoveSection(section.title)}>
+                        <StyleControlWrapper onRemoveSection={() => onRemoveSection(section.title)} disabled={disabled}>
                             {React.createElement(componentMap[section.title], { data })}
                         </StyleControlWrapper>
                     </Fragment>
