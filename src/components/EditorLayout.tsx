@@ -15,24 +15,16 @@ import StackResume from './examples/StackResume'
 
 import { ResumeBuilder } from './ResumeBuilder'
 import { ExperienceInput, PersonalInfoInput, SkillsInput, EducationInput, CertificationsInput } from './SectionForms'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { layoutAtom } from '../atom/layoutAtom'
-import React, { Fragment, forwardRef, useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
 import { Resume } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
-import { ArrowRightIcon, ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
 import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
 import { useNavigate } from 'react-router-dom'
-
-type SectionTitle = 'Personal Info' | 'Experiences' | 'Education' | 'Skills' | 'Certifications'
-
-type InputComponent = React.ComponentType<{ onSave: (draft: Resume) => void }>
-
-type ComponentMap = {
-    [K in SectionTitle]: InputComponent
-}
 
 export const GridTwoLayout = () => {
     return (
@@ -82,15 +74,6 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
         setLayout(newLayout)
     }
 
-    useEffect(() => {
-        setLayout([
-            {
-                component: <PersonalInfoInput onSave={handleSave} />,
-                title: 'Personal Info'
-            }
-        ])
-    }, [])
-
     const onRemoveSection = (title: string) => {
         setLayout(prevLayout => prevLayout.filter(section => section.title !== title))
     }
@@ -134,12 +117,7 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
                 >
                     <VStack ref={ref} padding={8}>
                         {colomns === 1 && (
-                            <StackResume
-                                data={draft}
-                                onAddSection={onAddSection}
-                                layout={layout}
-                                onRemoveSection={onRemoveSection}
-                            />
+                            <StackResume data={draft} layout={layout} onRemoveSection={onRemoveSection} />
                         )}
                     </VStack>
                     {!hover && (

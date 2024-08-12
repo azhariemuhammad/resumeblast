@@ -43,3 +43,11 @@ export type Resume = {
     skills: Array<Skill>
     title?: string
 }
+
+export type LayoutStyles = {
+    fontSize: string
+    color: string
+    fontFamily: string
+    layout: 'row' | 'col'
+    alignment: 'left' | 'center' | 'right'
+}

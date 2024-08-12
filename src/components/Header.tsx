@@ -11,7 +11,7 @@ export const Header = () => {
             top={0}
             bg="white"
             zIndex={20}
-            mb={4}
+            mb={10}
             px={4}
             pos="sticky"
             boxShadow="rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;"

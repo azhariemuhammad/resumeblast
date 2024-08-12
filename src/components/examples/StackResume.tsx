@@ -1,28 +1,19 @@
 import React, { Fragment } from 'react'
-import {
-    Box,
-    VStack,
-    HStack,
-    Text,
-    Image,
-    Heading,
-    Divider,
-    UnorderedList,
-    ListItem,
-    Grid,
-    GridItem,
-    Menu,
-    MenuButton,
-    Button,
-    MenuList,
-    MenuItem
-} from '@chakra-ui/react'
+import { VStack, HStack, Text, Image, Heading, UnorderedList, ListItem, Grid, GridItem } from '@chakra-ui/react'
 import { Resume } from '../../types'
 import { format } from 'date-fns'
-import { ChevronDownIcon } from '@chakra-ui/icons'
-import { sectionItems } from '../shared'
 import { StyleControlWrapper } from '../StyleController'
 
+type SectionProps = {
+    data: Resume
+    styles: {
+        fontSize: string
+        color: string
+        fontFamily: string
+        layout: 'row' | 'col'
+        alignment: 'left' | 'center' | 'right'
+    }
+}
 const Header = ({ data }) => {
     return (
         <HStack spacing={12} alignItems="flex-start" mb={8}>
@@ -43,17 +34,24 @@ const Header = ({ data }) => {
     )
 }
 
-const PersonalInfo = ({ data, styles }) => {
+const PersonalInfo = ({ data, styles }: SectionProps) => {
     const textStyles = {
         fontSize: styles.fontSize,
         color: styles.color,
-        fontFamily: styles.fontFamily
+        fontFamily: styles.fontFamily,
+        textAlign: styles.alignment
     }
 
     return (
-        <Grid templateColumns="repeat(10, 1fr)" gap={4} gridAutoFlow="row">
-            <GridItem colSpan={4} alignSelf="flex-start">
-                <Heading as="h2" size="md">
+        <Grid
+            gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
+            gap={4}
+            gridAutoFlow={styles.layout === 'col' ? 'column' : 'row'}
+            justifyItems={styles.alignment}
+            justifyContent="space-between"
+        >
+            <GridItem>
+                <Heading as="h2" size="md" textAlign={styles.alignment}>
                     Details
                 </Heading>
                 <Text {...textStyles}>{data.phoneNumber}</Text>
@@ -61,8 +59,8 @@ const PersonalInfo = ({ data, styles }) => {
                 <Text {...textStyles}>{data.address}</Text>
                 <Text {...textStyles}>{data.linkedin}</Text>
             </GridItem>
-            <GridItem colSpan={6} alignSelf="flex-start">
-                <Heading as="h2" size="md">
+            <GridItem>
+                <Heading as="h2" size="md" textAlign={styles.alignment}>
                     Profile
                 </Heading>
                 <Text w="full" whiteSpace="pre-wrap" {...textStyles}>
@@ -73,30 +71,44 @@ const PersonalInfo = ({ data, styles }) => {
     )
 }
 
-const Experiences = ({ data, styles }) => {
+const Experiences = ({ data, styles }: SectionProps) => {
     const textStyles = {
         fontSize: styles.fontSize,
         color: styles.color,
-        fontFamily: styles.fontFamily
+        fontFamily: styles.fontFamily,
+        textAlign: styles.alignment
     }
 
     return (
         <VStack spacing={4} alignItems="flex-start">
-            <Heading as="h2" size="md">
+            <Heading as="h2" size="md" w="full" textAlign={styles.alignment}>
                 Experience
             </Heading>
             {data.experiences.map((exp, index) => (
-                <Grid key={index} templateColumns="repeat(10, 1fr)" gap={4}>
-                    <GridItem colSpan={4} alignSelf="flex-start">
+                <Grid
+                    key={index}
+                    gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
+                    gap={4}
+                    gridAutoFlow={styles.layout === 'col' ? 'row' : 'column'}
+                    justifyItems={styles.alignment}
+                    justifyContent="space-between"
+                >
+                    <GridItem {...textStyles}>
                         <Text fontWeight="bold">{`${format(exp.startDate, 'yyyy')} - ${format(
                             exp.endDate,
                             'yyyy'
                         )}`}</Text>
                     </GridItem>
-                    <GridItem colSpan={6} alignSelf="flex-start">
-                        <Text fontWeight="bold">{exp.title}</Text>
-                        <Text fontWeight="medium">{exp.company}</Text>
-                        <Text fontStyle="italic">{exp.location}</Text>
+                    <GridItem>
+                        <Text fontWeight="bold" {...textStyles}>
+                            {exp.title}
+                        </Text>
+                        <Text fontWeight="medium" {...textStyles}>
+                            {exp.company}
+                        </Text>
+                        <Text fontStyle="italic" {...textStyles}>
+                            {exp.location}
+                        </Text>
                         <Text {...textStyles}>{exp.description}</Text>
                     </GridItem>
                 </Grid>
@@ -105,27 +117,44 @@ const Experiences = ({ data, styles }) => {
     )
 }
 
-const Education = ({ data }) => {
+const Education = ({ data, styles }: SectionProps) => {
+    const textStyles = {
+        fontSize: styles.fontSize,
+        color: styles.color,
+        fontFamily: styles.fontFamily
+    }
     return (
-        <VStack spacing={4} alignItems="flex-start">
-            <Heading as="h2" size="md">
+        <VStack spacing={4} alignItems="flex-start" w="full">
+            <Heading as="h2" size="md" w="full" textAlign={styles.alignment}>
                 Education
             </Heading>
             {data.education.map((edu, index) => (
-                <Grid key={index} templateColumns="repeat(10, 1fr)" gap={4} w="full">
-                    <GridItem colSpan={4} alignSelf="flex-start">
-                        <Text fontWeight="bold">{`${format(edu.startDate, 'yyyy')} - ${format(
+                <Grid
+                    key={index}
+                    gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
+                    gap={4}
+                    w="full"
+                    gridAutoFlow={styles.layout === 'col' ? 'column' : 'row'}
+                    justifyItems={styles.alignment}
+                    justifyContent="space-between"
+                >
+                    <GridItem>
+                        <Text fontWeight="bold" {...textStyles}>{`${format(edu.startDate, 'yyyy')} - ${format(
                             edu.endDate,
                             'yyyy'
                         )}`}</Text>
                     </GridItem>
-                    <GridItem colSpan={6} alignSelf="flex-start">
-                        <Text fontWeight="bold">
+                    <GridItem textAlign={styles.alignment}>
+                        <Text fontWeight="bold" {...textStyles}>
                             {edu.degree} in {edu.major}
                         </Text>
-                        <Text fontWeight="medium">{edu.university || edu.school}</Text>
-                        <Text fontStyle="italic">{edu.location}</Text>
-                        <Text>{edu.description}</Text>
+                        <Text fontWeight="medium" {...textStyles}>
+                            {edu.university || edu.school}
+                        </Text>
+                        <Text fontStyle="italic" {...textStyles}>
+                            {edu.location}
+                        </Text>
+                        <Text {...textStyles}>{edu.description}</Text>
                     </GridItem>
                 </Grid>
             ))}
@@ -133,16 +162,26 @@ const Education = ({ data }) => {
     )
 }
 
-const Skills = ({ data }) => {
+const Skills = ({ data, styles }: SectionProps) => {
+    const textStyles = {
+        fontSize: styles.fontSize,
+        color: styles.color,
+        fontFamily: styles.fontFamily,
+        textAlign: styles.alignment
+    }
+
     return (
         <VStack spacing={4} alignItems="flex-start">
-            <Heading as="h2" size="md">
+            <Heading as="h2" size="md" w="full" textAlign={styles.alignment}>
                 Skills
             </Heading>
-            <UnorderedList spacing={2} w="full">
+            <UnorderedList spacing={2} w="full" textAlign={styles.alignment}>
                 {data.skills.map((skill, index) => (
                     <ListItem key={index}>
-                        {skill.name} - {skill.score}/10
+                        <Text fontWeight="bold" {...textStyles}>
+                            {skill.name}
+                        </Text>
+                        <Text {...textStyles}>{skill.score}/10</Text>
                     </ListItem>
                 ))}
             </UnorderedList>
@@ -150,16 +189,25 @@ const Skills = ({ data }) => {
     )
 }
 
-const Certifications = ({ data }) => {
+const Certifications = ({ data, styles }: SectionProps) => {
+    const textStyles = {
+        fontSize: styles.fontSize,
+        color: styles.color,
+        fontFamily: styles.fontFamily,
+        textAlign: styles.alignment
+    }
+
     return (
         <VStack spacing={4} alignItems="flex-start">
-            <Heading as="h2" size="md">
+            <Heading as="h2" size="md" w="full" textAlign={styles.alignment}>
                 Certifications
             </Heading>
             {data.certifications.map((cert, index) => (
-                <HStack key={index} justifyContent="space-between">
-                    <Text fontWeight="medium">{cert.name}</Text>
-                    <Text>{format(cert.date, 'yyyy')}</Text>
+                <HStack key={index} justifyContent="space-between" w="full">
+                    <Text fontWeight="medium" {...textStyles}>
+                        {cert.name}
+                    </Text>
+                    <Text {...textStyles}>{format(cert.date, 'yyyy')}</Text>
                 </HStack>
             ))}
         </VStack>
@@ -192,7 +240,7 @@ type StackResumeProps = {
 const StackResume: React.FC<StackResumeProps> = ({ data, layout, disabled = false, onRemoveSection }) => {
     return (
         <>
-            <Header data={data} />
+            {/* <Header data={data} /> */}
             <VStack align="stretch" spacing={6}>
                 {layout.map((section, index) => (
                     <Fragment key={index}>
