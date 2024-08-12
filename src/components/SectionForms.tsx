@@ -93,89 +93,94 @@ export const PersonalInfoInput = ({ onSave }) => {
 export const ExperienceInput = ({ onSave }) => {
     const { values, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
-    console.log(values)
+    console.log('experiences', values.experiences)
 
-    useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
+    // useEffect(() => {
+    //     // if debouncedValues.experiences has changed, call onSave
+    //     if (JSON.stringify(debouncedValues?.experiences) !== JSON.stringify(values.experiences)) {
+    //         onSave(debouncedValues)
+    //     }
+    // }, [debouncedValues])
 
     return (
         <VStack gap={8} w="full">
-            {values.experiences.map((exp, index) => (
-                <Grid templateColumns="repeat(2, 1fr)" gap={2} w="full" key={index}>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
-                            Title
-                        </FormLabel>
-                        <Input
-                            type="text"
-                            onChange={handleChange}
-                            name={`experiences.${index}.title`}
-                            placeholder="Title"
-                            defaultValue={exp.title}
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="company">
-                            Company
-                        </FormLabel>
-                        <Input
-                            defaultValue={exp.company}
-                            onChange={handleChange}
-                            type="text"
-                            name={`experiences.${index}.company`}
-                            placeholder="Company"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="location">
-                            Location
-                        </FormLabel>
-                        <Input
-                            onChange={handleChange}
-                            defaultValue={exp.location}
-                            type="text"
-                            name={`experiences.${index}.location`}
-                            placeholder="Location"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="startDate">
-                            Start Date
-                        </FormLabel>
-                        <Input
-                            onChange={handleChange}
-                            defaultValue={exp.startDate}
-                            type="date"
-                            name={`experiences.${index}.startDate`}
-                            placeholder="Start Date"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="endDate">
-                            End Date
-                        </FormLabel>
-                        <Input
-                            onChange={handleChange}
-                            defaultValue={exp.endDate}
-                            type="date"
-                            name={`experiences.${index}.endDate`}
-                            placeholder="End Date"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="description">
-                            Description
-                        </FormLabel>
-                        <Textarea
-                            onChange={handleChange}
-                            defaultValue={exp.description}
-                            name={`experiences.${index}.description`}
-                            placeholder="Description"
-                        />
-                    </FormControl>
-                </Grid>
-            ))}
+            {values.experiences &&
+                values.experiences.length > 0 &&
+                values.experiences.map((exp, index) => (
+                    <Grid templateColumns="repeat(2, 1fr)" gap={2} w="full" key={index}>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
+                                Title
+                            </FormLabel>
+                            <Input
+                                type="text"
+                                onChange={handleChange}
+                                name={`experiences.${index}.title`}
+                                placeholder="Title"
+                                defaultValue={exp.title}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="company">
+                                Company
+                            </FormLabel>
+                            <Input
+                                defaultValue={exp.company}
+                                onChange={handleChange}
+                                type="text"
+                                name={`experiences.${index}.company`}
+                                placeholder="Company"
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="location">
+                                Location
+                            </FormLabel>
+                            <Input
+                                onChange={handleChange}
+                                defaultValue={exp.location}
+                                type="text"
+                                name={`experiences.${index}.location`}
+                                placeholder="Location"
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="startDate">
+                                Start Date
+                            </FormLabel>
+                            <Input
+                                onChange={handleChange}
+                                defaultValue={exp.startDate}
+                                type="date"
+                                name={`experiences.${index}.startDate`}
+                                placeholder="Start Date"
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="endDate">
+                                End Date
+                            </FormLabel>
+                            <Input
+                                onChange={handleChange}
+                                defaultValue={exp.endDate}
+                                type="date"
+                                name={`experiences.${index}.endDate`}
+                                placeholder="End Date"
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="description">
+                                Description
+                            </FormLabel>
+                            <Textarea
+                                onChange={handleChange}
+                                defaultValue={exp.description}
+                                name={`experiences.${index}.description`}
+                                placeholder="Description"
+                            />
+                        </FormControl>
+                    </Grid>
+                ))}
         </VStack>
     )
 }
@@ -190,7 +195,7 @@ export const SkillsInput = ({ onSave }) => {
 
     return (
         <>
-            {values.skills.map((skill, index) => (
+            {values.skills?.map((skill, index) => (
                 <Grid key={index} templateColumns="repeat(2, 1fr)" gap={2}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">
@@ -232,7 +237,7 @@ export const EducationInput = ({ onSave }) => {
 
     return (
         <>
-            {values.education.map((edu, index) => (
+            {values.education?.map((edu, index) => (
                 <Grid templateColumns="repeat(2, 1fr)" gap={2} key={index}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="degree">
@@ -309,7 +314,7 @@ export const CertificationsInput = ({ onSave }) => {
     }, [debouncedValues])
     return (
         <>
-            {values.certifications.map((cert, index) => (
+            {values.certifications?.map((cert, index) => (
                 <Grid key={index} templateColumns="repeat(2, 1fr)" gap={2}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">

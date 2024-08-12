@@ -8,7 +8,8 @@ type ResumeBuilderProps = {
 }
 
 export const ResumeBuilder = ({ layout }: ResumeBuilderProps) => {
-    const [draft, setDraft] = useAtom(draftAtom)
+    const [draft, _] = useAtom(draftAtom)
+    console.log({ draft })
 
     return (
         <Accordion allowToggle w="full" gap={4}>

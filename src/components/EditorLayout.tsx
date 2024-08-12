@@ -17,14 +17,15 @@ import { ResumeBuilder } from './ResumeBuilder'
 import { ExperienceInput, PersonalInfoInput, SkillsInput, EducationInput, CertificationsInput } from './SectionForms'
 import { useAtom } from 'jotai'
 import { layoutAtom } from '../atom/layoutAtom'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
-import { Resume } from '../types'
+import { LayoutStyles, Resume, SaveResumeProps } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
 import { ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
 import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
 import { useNavigate } from 'react-router-dom'
+import { AuthWrapper } from './AuthWrapper'
 
 export const GridTwoLayout = () => {
     return (
@@ -35,19 +36,26 @@ export const GridTwoLayout = () => {
 }
 
 type EditorLayoutProps = {
+    onSave: (values: SaveResumeProps) => void
     children?: React.ReactNode
     colomns?: number
 }
-export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
+export const EditorLayout = ({ onSave, colomns = 1, savedLayout }: EditorLayoutProps) => {
     const [hover, setHover] = useState(false)
     const [layout, setLayout] = useAtom(layoutAtom)
     const [draft, setDraft] = useAtom(draftAtom)
+    console.log({ draft })
     const navigate = useNavigate()
+    const ref = useRef<HTMLDivElement>(null)
+    const { applyWatermark, removeWatermark, currentWatermark } = useWatermark(ref)
     const handleSave = (draft: Resume) => {
         setDraft(draft)
     }
-    const ref = useRef<HTMLDivElement>(null)
-    const { applyWatermark, removeWatermark } = useWatermark(ref)
+
+    const handleSaveDraft = () => {
+        const layoutTitles = layout.map(section => section.title)
+        onSave({ draft, layoutTitles, watermark: currentWatermark as LayoutStyles & { watermarkText: string } })
+    }
 
     const onAddSection = (title: string) => {
         let component: React.ReactNode
@@ -78,6 +86,13 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
         setLayout(prevLayout => prevLayout.filter(section => section.title !== title))
     }
 
+    console.log({ savedLayout })
+    useEffect(() => {
+        savedLayout.forEach(section => {
+            onAddSection(section)
+        })
+    }, [savedLayout])
+
     return (
         <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>
             <GridItem colSpan={4}>
@@ -97,9 +112,11 @@ export const EditorLayout = ({ children, colomns = 1 }: EditorLayoutProps) => {
                         <Watermark applyWatermark={applyWatermark} removeWatermark={removeWatermark} />
                     </HStack>
                     <HStack>
-                        <Button variant="ghost" onClick={() => console.log('save')} size="sm">
-                            Save
-                        </Button>
+                        <AuthWrapper onAuthRequired={() => handleSaveDraft()}>
+                            <Button variant="ghost" size="sm">
+                                Save
+                            </Button>
+                        </AuthWrapper>
                         <SaveAsPdfButton
                             ref={ref}
                             onHover={() => setHover(true)}

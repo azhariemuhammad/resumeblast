@@ -51,3 +51,9 @@ export type LayoutStyles = {
     layout: 'row' | 'col'
     alignment: 'left' | 'center' | 'right'
 }
+
+export type SaveResumeProps = {
+    draft: Resume
+    watermark: LayoutStyles & { watermarkText: string }
+    layoutTitles: Array<string>
+}

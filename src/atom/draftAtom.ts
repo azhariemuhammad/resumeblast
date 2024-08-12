@@ -1,5 +1,17 @@
 import { atom } from 'jotai'
 import { Resume } from '../types'
-import { mock } from '../mockData'
 
-export const draftAtom = atom<Resume>(mock)
+export const draftAtom = atom<Resume>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    address: '',
+    experiences: [],
+    education: [],
+    certifications: [],
+    description: '',
+    references: [],
+    linkedin: '',
+    skills: []
+})
