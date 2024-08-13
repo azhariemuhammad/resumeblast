@@ -57,6 +57,8 @@ export type SaveResumeProps = {
     watermark: WatermarkStyle
     layoutTitles: Array<string>
     styles: LayoutStyles
+    layoutName?: string
+    redirectTo?: string
 }
 
 export type WatermarkStyle = {
@@ -65,4 +67,17 @@ export type WatermarkStyle = {
     fontFamily?: string
     opacity: number
     watermarkText: string
+}
+
+export type ResumeData = {
+    id: string
+    user_id: string
+    layout_name: string
+    data: Resume
+    styles: LayoutStyles
+    watermark: WatermarkStyle
+    created_at: string
+    updated_at: string
+    layout: Array<string>
+    is_template: boolean
 }

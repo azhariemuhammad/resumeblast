@@ -1,10 +1,35 @@
-import { FormControl, FormLabel, Grid, Input, Textarea, VStack } from '@chakra-ui/react'
+import {
+    Button,
+    FormControl,
+    FormLabel,
+    Grid,
+    SimpleGrid,
+    Input,
+    Textarea,
+    VStack,
+    GridItem,
+    Container
+} from '@chakra-ui/react'
 import { useFormikContext } from 'formik'
 import { useDebounce } from '../hooks/useDebounce'
 import { useEffect } from 'react'
 
+type AddMoreButtonProps = {
+    onAdd: () => void
+}
+
+const AddMoreButton = ({ onAdd }: AddMoreButtonProps) => (
+    <SimpleGrid columns={10} justifyContent="center" w="full" gap={2}>
+        <GridItem colStart={{ base: 1, md: 5 }} colSpan={{ base: 10, md: 2 }}>
+            <Button w="100%" aria-label="add experience" variant="outline" onClick={onAdd}>
+                Add more +
+            </Button>
+        </GridItem>
+    </SimpleGrid>
+)
+
 export const PersonalInfoInput = ({ onSave }) => {
-    const { values, submitForm, handleChange } = useFormikContext()
+    const { values, handleChange } = useFormikContext()
 
     const debouncedValues = useDebounce(values, 500)
 
@@ -13,7 +38,7 @@ export const PersonalInfoInput = ({ onSave }) => {
     }, [debouncedValues])
 
     return (
-        <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2}>
             <FormControl>
                 <FormLabel color="text.secondary" fontSize="xs" htmlFor="firstName">
                     First Name
@@ -38,6 +63,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     placeholder="Last Name"
                 />
             </FormControl>
+
             <FormControl>
                 <FormLabel color="text.secondary" fontSize="xs" htmlFor="email">
                     Email
@@ -102,20 +128,34 @@ export const PersonalInfoInput = ({ onSave }) => {
 }
 
 export const ExperienceInput = ({ onSave }) => {
-    const { values, handleChange } = useFormikContext()
+    const { values, handleChange, setValues } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
-    console.log('experiences', values.experiences)
 
     useEffect(() => {
         onSave(debouncedValues)
     }, [debouncedValues])
+
+    const hanldeAddExperience = () => {
+        const newExperience = {
+            title: '',
+            company: '',
+            location: '',
+            startDate: '',
+            endDate: '',
+            description: ''
+        }
+        setValues({
+            ...values,
+            experiences: [...values.experiences, newExperience]
+        })
+    }
 
     return (
         <VStack gap={8} w="full">
             {values.experiences &&
                 values.experiences.length > 0 &&
                 values.experiences.map((exp, index) => (
-                    <Grid templateColumns="repeat(2, 1fr)" gap={2} w="full" key={index}>
+                    <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} w="full" key={index}>
                         <FormControl>
                             <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
                                 Title
@@ -189,13 +229,25 @@ export const ExperienceInput = ({ onSave }) => {
                         </FormControl>
                     </Grid>
                 ))}
+            <AddMoreButton onAdd={hanldeAddExperience} />
         </VStack>
     )
 }
 
 export const SkillsInput = ({ onSave }) => {
-    const { values, handleChange } = useFormikContext()
+    const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+
+    const handleAddSkill = () => {
+        const newSkill = {
+            name: '',
+            score: 0
+        }
+        setValues({
+            ...values,
+            skills: [...values.skills, newSkill]
+        })
+    }
 
     useEffect(() => {
         onSave(debouncedValues)
@@ -204,7 +256,7 @@ export const SkillsInput = ({ onSave }) => {
     return (
         <>
             {values.skills?.map((skill, index) => (
-                <Grid key={index} templateColumns="repeat(2, 1fr)" gap={2}>
+                <Grid key={index} templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} mb={4}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">
                             Name
@@ -231,13 +283,28 @@ export const SkillsInput = ({ onSave }) => {
                     </FormControl>
                 </Grid>
             ))}
+            <AddMoreButton onAdd={handleAddSkill} />
         </>
     )
 }
 
 export const EducationInput = ({ onSave }) => {
-    const { values, handleChange } = useFormikContext()
+    const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+
+    const handleAddEducation = () => {
+        const newEducation = {
+            degree: '',
+            major: '',
+            university: '',
+            school: '',
+            location: ''
+        }
+        setValues({
+            ...values,
+            education: [...values.education, newEducation]
+        })
+    }
 
     useEffect(() => {
         onSave(debouncedValues)
@@ -246,7 +313,7 @@ export const EducationInput = ({ onSave }) => {
     return (
         <>
             {values.education?.map((edu, index) => (
-                <Grid templateColumns="repeat(2, 1fr)" gap={2} key={index}>
+                <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} key={index} mb={4}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="degree">
                             Degree
@@ -309,13 +376,25 @@ export const EducationInput = ({ onSave }) => {
                     </FormControl>
                 </Grid>
             ))}
+            <AddMoreButton onAdd={handleAddEducation} />
         </>
     )
 }
 
 export const CertificationsInput = ({ onSave }) => {
-    const { values, handleChange } = useFormikContext()
+    const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+
+    const handleAddCertification = () => {
+        const newCertification = {
+            name: '',
+            date: ''
+        }
+        setValues({
+            ...values,
+            certifications: [...values.certifications, newCertification]
+        })
+    }
 
     useEffect(() => {
         onSave(debouncedValues)
@@ -323,7 +402,7 @@ export const CertificationsInput = ({ onSave }) => {
     return (
         <>
             {values.certifications?.map((cert, index) => (
-                <Grid key={index} templateColumns="repeat(2, 1fr)" gap={2}>
+                <Grid key={index} templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} mb={4}>
                     <FormControl>
                         <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">
                             Name
@@ -350,6 +429,7 @@ export const CertificationsInput = ({ onSave }) => {
                     </FormControl>
                 </Grid>
             ))}
+            <AddMoreButton onAdd={handleAddCertification} />
         </>
     )
 }

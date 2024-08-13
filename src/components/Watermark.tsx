@@ -31,6 +31,8 @@ type WatermarkProps = {
 export const useWatermark = (ref: React.RefObject<HTMLDivElement>, watermark?: WatermarkStyle) => {
     const [_, setCurrentWatermark] = useAtom(watermarkAtom)
     const applyWatermark = (props: WatermarkStyle) => {
+        if (ref.current === null) return
+
         const { watermarkText, fontSize, fontColor, fontFamily, opacity } = props
         const resume = ref.current ?? { width: 0, height: 0, src: {} }
         const width = resume.width ?? '300px'

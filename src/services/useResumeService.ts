@@ -1,5 +1,5 @@
 import supabase from '../supabaseClient'
-import { Resume, SaveResumeProps } from '../types'
+import { Resume, ResumeData, SaveResumeProps } from '../types'
 
 export const useResumeService = () => {
     const getResumeById = async (resumeId: string) => {
@@ -10,8 +10,16 @@ export const useResumeService = () => {
         return data
     }
 
-    const getAllResumes = async (userId: string) => {
+    const getAllResumes = async (userId: string): Promise<Array<ResumeData> | null> => {
         const { data, error } = await supabase.from('resumes').select('*').eq('user_id', userId)
+        if (error) {
+            console.log(error)
+        }
+        return data
+    }
+
+    const getAllTemplates = async (userId: string) => {
+        const { data, error } = await supabase.from('resumes').select('*').eq('user_id', userId).eq('is_template', true)
         if (error) {
             console.log(error)
         }
@@ -24,7 +32,8 @@ export const useResumeService = () => {
         watermark,
         userId,
         resumeId = '',
-        styles
+        styles,
+        layoutName = ''
     }: SaveResumeProps & { userId: string; resumeId?: string }) => {
         const { data, error } = await await supabase
             .from('resumes')
@@ -33,7 +42,8 @@ export const useResumeService = () => {
                 watermark,
                 data: draft,
                 layout: layoutTitles,
-                layout_name: 'template-stack',
+                layout_name: layoutName,
+                is_template: Boolean(layoutName),
                 user_id: userId,
                 ...(resumeId !== '' && { id: resumeId })
             })
@@ -45,5 +55,5 @@ export const useResumeService = () => {
         return data
     }
 
-    return { getResumeById, saveResume, getAllResumes }
+    return { getResumeById, saveResume, getAllResumes, getAllTemplates }
 }

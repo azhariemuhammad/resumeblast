@@ -220,7 +220,7 @@ const Certifications = ({ data, styles }: SectionProps) => {
                     <Text fontWeight="medium" {...textStyles}>
                         {cert.name}
                     </Text>
-                    <Text {...textStyles}>{format(cert.date, 'yyyy')}</Text>
+                    {cert.date && <Text {...textStyles}>{format(cert.date, 'yyyy')}</Text>}
                 </HStack>
             ))}
         </VStack>
@@ -247,7 +247,7 @@ type StackResumeProps = {
     data: Resume
     layout: { component: React.ReactNode; title: string }[]
     onRemoveSection?: (title: string) => void
-    onSaveStyles: (styles: any, title: string) => void
+    onSaveStyles?: (styles: any, title: string) => void
     disabled?: boolean
     currentStyles: LayoutStyles
 }

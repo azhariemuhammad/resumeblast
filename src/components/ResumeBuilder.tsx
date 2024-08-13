@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box } from '@chakra-ui/react'
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react'
 import { Formik } from 'formik'
 import { useAtom } from 'jotai'
 import { draftAtom } from '../atom/draftAtom'
@@ -24,9 +24,9 @@ export const ResumeBuilder = ({ layout }: ResumeBuilderProps) => {
                         >
                             <h2>
                                 <AccordionButton>
-                                    <Box as="span" flex="1" textAlign="left">
+                                    <Text fontWeight="500" color="text.primary.800" as="span" flex="1" textAlign="left">
                                         {acc.title}
-                                    </Box>
+                                    </Text>
                                     <AccordionIcon />
                                 </AccordionButton>
                             </h2>

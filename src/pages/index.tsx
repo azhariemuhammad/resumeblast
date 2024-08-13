@@ -29,9 +29,15 @@ export const Home = () => {
                             <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
                                 or
                             </Text>
-                            <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
-                                Choose our best templates
-                            </Text>
+                            <Button
+                                onClick={() => navigate('/editor?isCandidateForm=true')}
+                                colorScheme="primary"
+                                variant="solid"
+                                size="lg"
+                                rightIcon={<ArrowForwardIcon />}
+                            >
+                                Input candidate info
+                            </Button>
                         </Stack>
                     </Center>
                 </Container>

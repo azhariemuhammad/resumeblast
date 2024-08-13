@@ -10,7 +10,8 @@ export const routes = (
         <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/editor" element={<Editor />} />
-            <Route path="/preview" element={<Preview />} />
+            <Route path="/candidate?isCandidateForm=true" element={<Editor />} />
+
             <Route path="/collections" element={<Collections />} />
         </Route>
     </Routes>
