@@ -1,30 +1,24 @@
-import { Button, Flex, Stack, useToast } from '@chakra-ui/react'
+import { Stack, useToast } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { EditorLayout } from '../components/EditorLayout'
 import { Header } from '../components/Header'
 import { useAtom } from 'jotai'
 import { userAtom } from '../atom/userAtom'
 import { useResumeService } from '../services/useResumeService'
-
-import { useAuth } from '../services/useAuth'
 import { Resume, SaveResumeProps } from '../types'
-import { useNavigate, useParams } from 'react-router-dom'
-import { url } from 'inspector'
 import { draftAtom } from '../atom/draftAtom'
-import { layoutAtom } from '../atom/layoutAtom'
 
 export const Editor = () => {
     const [user] = useAtom(userAtom)
+    const [_, setDraft] = useAtom(draftAtom)
     const navigate = useNavigate()
-
     const toast = useToast()
+
     const urlParams = new URLSearchParams(window.location.search)
     const resumeId = urlParams.get('resumeId') ?? ''
 
-    const [_, setDraft] = useAtom(draftAtom)
-
     const { saveResume, getResumeById } = useResumeService()
-    const { session } = useAuth()
     const userId = user?.id ?? ''
 
     const { data, isLoading } = useQuery({
@@ -50,19 +44,21 @@ export const Editor = () => {
     })
 
     const handleSave = async ({ draft, layoutTitles, watermark }: SaveResumeProps) => {
-        const data = await saveResume({ draft, layoutTitles, watermark, userId })
+        const data = await saveResume({ draft, layoutTitles, watermark, userId, resumeId })
 
         if (data?.[0]?.id) {
-            navigate('/editor?resumeId=' + data[0].id)
+            navigate('/editor?resumeId=' + data[0].id, { replace: true })
         }
     }
 
-    const savedLayout = data?.layout as Array<{ component: React.ReactNode; title: string }>
+    const savedLayout = data?.layout ?? []
+    const watermark = data?.watermark ?? {}
+    console.log({ watermark })
 
     return (
         <Stack>
             <Header />
-            {!isLoading && <EditorLayout onSave={handleSave} savedLayout={savedLayout} />}
+            {!isLoading && <EditorLayout watermark={watermark} onSave={handleSave} savedLayout={savedLayout} />}
         </Stack>
     )
 }

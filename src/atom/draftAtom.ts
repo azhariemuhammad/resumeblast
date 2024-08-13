@@ -7,11 +7,11 @@ export const draftAtom = atom<Resume>({
     email: '',
     phoneNumber: '',
     address: '',
-    experiences: [],
-    education: [],
-    certifications: [],
+    experiences: [{ title: '', company: '', location: '', startDate: '', endDate: '', description: '' }],
+    education: [{ degree: '', major: '', university: '', school: '', location: '' }],
+    certifications: [{ name: '', date: '' }],
     description: '',
     references: [],
     linkedin: '',
-    skills: []
+    skills: [{ name: '', score: '' }]
 })

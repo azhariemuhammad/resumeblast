@@ -17,7 +17,7 @@ import { ResumeBuilder } from './ResumeBuilder'
 import { ExperienceInput, PersonalInfoInput, SkillsInput, EducationInput, CertificationsInput } from './SectionForms'
 import { useAtom } from 'jotai'
 import { layoutAtom } from '../atom/layoutAtom'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
 import { LayoutStyles, Resume, SaveResumeProps } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
@@ -26,6 +26,7 @@ import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
 import { useNavigate } from 'react-router-dom'
 import { AuthWrapper } from './AuthWrapper'
+import { set } from 'date-fns'
 
 export const GridTwoLayout = () => {
     return (
@@ -36,18 +37,19 @@ export const GridTwoLayout = () => {
 }
 
 type EditorLayoutProps = {
+    savedLayout?: Array<string>
     onSave: (values: SaveResumeProps) => void
     children?: React.ReactNode
     colomns?: number
+    watermark: LayoutStyles & { watermarkText: string }
 }
-export const EditorLayout = ({ onSave, colomns = 1, savedLayout }: EditorLayoutProps) => {
+export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark = {} }: EditorLayoutProps) => {
     const [hover, setHover] = useState(false)
     const [layout, setLayout] = useAtom(layoutAtom)
     const [draft, setDraft] = useAtom(draftAtom)
-    console.log({ draft })
     const navigate = useNavigate()
     const ref = useRef<HTMLDivElement>(null)
-    const { applyWatermark, removeWatermark, currentWatermark } = useWatermark(ref)
+    const { applyWatermark, removeWatermark, currentWatermark } = useWatermark(ref, watermark)
     const handleSave = (draft: Resume) => {
         setDraft(draft)
     }
@@ -57,28 +59,26 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout }: EditorLayoutP
         onSave({ draft, layoutTitles, watermark: currentWatermark as LayoutStyles & { watermarkText: string } })
     }
 
-    const onAddSection = (title: string) => {
-        let component: React.ReactNode
-
+    const getComponentByTitle = useCallback((title: string) => {
         switch (title) {
             case 'Personal Info':
-                component = <PersonalInfoInput onSave={handleSave} />
-                break
+                return <PersonalInfoInput onSave={handleSave} />
             case 'Experiences':
-                component = <ExperienceInput onSave={handleSave} />
-                break
+                return <ExperienceInput onSave={handleSave} />
             case 'Education':
-                component = <EducationInput onSave={handleSave} />
-                break
+                return <EducationInput onSave={handleSave} />
             case 'Skills':
-                component = <SkillsInput onSave={handleSave} />
-                break
+                return <SkillsInput onSave={handleSave} />
             case 'Certifications':
-                component = <CertificationsInput onSave={handleSave} />
-                break
+                return <CertificationsInput onSave={handleSave} />
         }
+    }, [])
+
+    const onAddSection = (title: string) => {
+        const component = getComponentByTitle(title)
 
         const newLayout = [...layout, { component, title }]
+
         setLayout(newLayout)
     }
 
@@ -86,12 +86,20 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout }: EditorLayoutP
         setLayout(prevLayout => prevLayout.filter(section => section.title !== title))
     }
 
-    console.log({ savedLayout })
     useEffect(() => {
-        savedLayout.forEach(section => {
-            onAddSection(section)
+        let component: React.ReactNode
+        if (savedLayout.length === 0) {
+            return
+        }
+        const newLayout = savedLayout.map((title: string) => {
+            component = getComponentByTitle(title)
+            return { component, title }
         })
-    }, [savedLayout])
+
+        if (newLayout.length > 0) {
+            setLayout(newLayout)
+        }
+    }, [])
 
     return (
         <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>

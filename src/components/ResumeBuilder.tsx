@@ -9,10 +9,9 @@ type ResumeBuilderProps = {
 
 export const ResumeBuilder = ({ layout }: ResumeBuilderProps) => {
     const [draft, _] = useAtom(draftAtom)
-    console.log({ draft })
 
     return (
-        <Accordion allowToggle w="full" gap={4}>
+        <Accordion allowToggle w="full" gap={4} defaultIndex={[0]}>
             <Formik initialValues={draft} onSubmit={() => console.log('submit')}>
                 <>
                     {layout.map((acc, index) => (

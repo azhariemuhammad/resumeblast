@@ -79,6 +79,8 @@ const Experiences = ({ data, styles }: SectionProps) => {
         textAlign: styles.alignment
     }
 
+    console.log('textStyles', textStyles)
+
     return (
         <VStack spacing={4} alignItems="flex-start">
             <Heading as="h2" size="md" w="full" textAlign={styles.alignment}>
@@ -94,10 +96,14 @@ const Experiences = ({ data, styles }: SectionProps) => {
                     justifyContent="space-between"
                 >
                     <GridItem {...textStyles}>
-                        <Text fontWeight="bold">{`${format(exp.startDate, 'yyyy')} - ${format(
-                            exp.endDate,
-                            'yyyy'
-                        )}`}</Text>
+                        {exp.startDate && exp.endDate ? (
+                            <Text fontWeight="bold">{`${format(exp.startDate, 'yyyy')} - ${format(
+                                exp.endDate,
+                                'yyyy'
+                            )}`}</Text>
+                        ) : (
+                            <Text fontWeight="bold"></Text>
+                        )}
                     </GridItem>
                     <GridItem>
                         <Text fontWeight="bold" {...textStyles}>
@@ -139,10 +145,13 @@ const Education = ({ data, styles }: SectionProps) => {
                     justifyContent="space-between"
                 >
                     <GridItem>
-                        <Text fontWeight="bold" {...textStyles}>{`${format(edu.startDate, 'yyyy')} - ${format(
-                            edu.endDate,
-                            'yyyy'
-                        )}`}</Text>
+                        {edu.startDate && edu.endDate ? (
+                            <Text fontWeight="bold" {...textStyles}>
+                                {`${format(edu.startDate, 'yyyy')} - ${format(edu.endDate, 'yyyy')}`}
+                            </Text>
+                        ) : (
+                            <Text fontWeight="bold" {...textStyles}></Text>
+                        )}
                     </GridItem>
                     <GridItem textAlign={styles.alignment}>
                         <Text fontWeight="bold" {...textStyles}>
@@ -238,6 +247,7 @@ type StackResumeProps = {
 }
 
 const StackResume: React.FC<StackResumeProps> = ({ data, layout, disabled = false, onRemoveSection }) => {
+    console.log('layout', layout)
     return (
         <>
             {/* <Header data={data} /> */}

@@ -10,7 +10,13 @@ export const useResumeService = () => {
         return data
     }
 
-    const saveResume = async ({ draft, layoutTitles, watermark, userId }: SaveResumeProps & { userId: string }) => {
+    const saveResume = async ({
+        draft,
+        layoutTitles,
+        watermark,
+        userId,
+        resumeId = ''
+    }: SaveResumeProps & { userId: string; resumeId?: string }) => {
         const { data, error } = await await supabase
             .from('resumes')
             .upsert({
@@ -19,7 +25,8 @@ export const useResumeService = () => {
                 layout: layoutTitles,
                 styles: {},
                 watermark,
-                user_id: userId
+                user_id: userId,
+                ...(resumeId !== '' && { id: resumeId })
             })
             .select()
 

@@ -86,6 +86,17 @@ export const PersonalInfoInput = ({ onSave }) => {
                     placeholder="LinkedIn"
                 />
             </FormControl>
+            <FormControl>
+                <FormLabel color="text.secondary" fontSize="xs" htmlFor="description">
+                    Description
+                </FormLabel>
+                <Textarea
+                    onChange={handleChange}
+                    defaultValue={values.description}
+                    name="description"
+                    placeholder="Description"
+                />
+            </FormControl>
         </Grid>
     )
 }
@@ -95,12 +106,9 @@ export const ExperienceInput = ({ onSave }) => {
     const debouncedValues = useDebounce(values, 500)
     console.log('experiences', values.experiences)
 
-    // useEffect(() => {
-    //     // if debouncedValues.experiences has changed, call onSave
-    //     if (JSON.stringify(debouncedValues?.experiences) !== JSON.stringify(values.experiences)) {
-    //         onSave(debouncedValues)
-    //     }
-    // }, [debouncedValues])
+    useEffect(() => {
+        onSave(debouncedValues)
+    }, [debouncedValues])
 
     return (
         <VStack gap={8} w="full">
