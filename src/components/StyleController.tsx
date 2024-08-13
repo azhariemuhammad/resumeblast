@@ -1,4 +1,3 @@
-import { DeleteIcon } from '@chakra-ui/icons'
 import {
     Box,
     Popover,
@@ -8,18 +7,16 @@ import {
     FormLabel,
     Input,
     Select,
-    HStack,
     VStack,
     Button,
-    IconButton,
-    Flex,
-    Grid
+    Flex
 } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { AlignSwitch } from './AlignSwitch'
 
 type StyleControlWrapperProps = {
     children: React.ReactNode
+    onSaveStyles: (styles: any) => void
     onRemoveSection: () => void
     disabled?: boolean
 }
@@ -36,7 +33,6 @@ type ViewSwitchProps = {
 }
 
 const ViewSwitch = ({ isCol = false, onToggle }: ViewSwitchProps) => {
-    console.log(isCol)
     const handleToggle = () => {
         onToggle(isCol ? 'row' : 'col')
     }
@@ -155,20 +151,30 @@ const StyleControls = ({ styles, onStyleChange, onRemoveSection }: StyleControls
     )
 }
 
-export const StyleControlWrapper = ({ children, onRemoveSection, disabled }: StyleControlWrapperProps) => {
-    const [styles, setStyles] = useState({
+export const StyleControlWrapper = ({
+    children,
+    onRemoveSection,
+    disabled,
+    onSaveStyles,
+    defaultValue = {
         fontSize: 'md',
         color: '#000000',
         fontFamily: "'Helvetica', sans-serif",
         layout: 'col',
         alignment: 'left'
-    })
+    }
+}: StyleControlWrapperProps) => {
+    const [styles, setStyles] = useState(defaultValue)
 
     const handleStyleChange = (property, value) => {
         setStyles(prevStyles => ({
             ...prevStyles,
             [property]: value
         }))
+        onSaveStyles({
+            ...styles,
+            [property]: value
+        })
     }
 
     return (

@@ -1,17 +1,32 @@
 import React, { useState, ReactElement } from 'react'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { useAuth } from '../services/useAuth'
-import supabase from '../supabaseClient'
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@chakra-ui/react'
+import { Modal, ModalOverlay, ModalContent, ModalBody } from '@chakra-ui/react'
 import { AuthForm } from './AuthForm'
 
-interface AuthWrapperProps {
+type AuthWrapperProps = {
     children: ReactElement
-    onAuthRequired: () => void
+    onAuthRequired?: () => void
 }
 
-export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children, onAuthRequired }) => {
+type AuthModalProps = {
+    showAuth: boolean
+    onClose: () => void
+}
+
+export const AuthModal = ({ showAuth, onClose }: AuthModalProps) => {
+    return (
+        <Modal isOpen={showAuth} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalBody>
+                    <AuthForm onSuccess={onClose} />
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    )
+}
+
+export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children, onAuthRequired = () => {} }) => {
     const { session, loading } = useAuth()
     const [showAuth, setShowAuth] = useState<boolean>(false)
 
@@ -28,17 +43,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children, onAuthRequir
     }
 
     if (showAuth) {
-        return (
-            <Modal isOpen={showAuth} onClose={() => setShowAuth(false)}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <AuthForm onSuccess={() => setShowAuth(false)} />
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        )
+        return <AuthModal showAuth={showAuth} onClose={() => setShowAuth(false)} />
     }
 
     return React.cloneElement(children, {

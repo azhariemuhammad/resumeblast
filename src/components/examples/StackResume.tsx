@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { VStack, HStack, Text, Image, Heading, UnorderedList, ListItem, Grid, GridItem } from '@chakra-ui/react'
-import { Resume } from '../../types'
+import { LayoutStyles, Resume } from '../../types'
 import { format } from 'date-fns'
 import { StyleControlWrapper } from '../StyleController'
 
@@ -43,31 +43,35 @@ const PersonalInfo = ({ data, styles }: SectionProps) => {
     }
 
     return (
-        <Grid
-            gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
-            gap={4}
-            gridAutoFlow={styles.layout === 'col' ? 'column' : 'row'}
-            justifyItems={styles.alignment}
-            justifyContent="space-between"
-        >
-            <GridItem>
-                <Heading as="h2" size="md" textAlign={styles.alignment}>
-                    Details
-                </Heading>
-                <Text {...textStyles}>{data.phoneNumber}</Text>
-                <Text {...textStyles}>{data.email}</Text>
-                <Text {...textStyles}>{data.address}</Text>
-                <Text {...textStyles}>{data.linkedin}</Text>
-            </GridItem>
-            <GridItem>
-                <Heading as="h2" size="md" textAlign={styles.alignment}>
-                    Profile
-                </Heading>
-                <Text w="full" whiteSpace="pre-wrap" {...textStyles}>
-                    {data.description}
-                </Text>
-            </GridItem>
-        </Grid>
+        <>
+            <Header data={data} />
+
+            <Grid
+                gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
+                gap={4}
+                gridAutoFlow={styles.layout === 'col' ? 'column' : 'row'}
+                justifyItems={styles.alignment}
+                justifyContent="space-between"
+            >
+                <GridItem>
+                    <Heading as="h2" size="md" textAlign={styles.alignment}>
+                        Details
+                    </Heading>
+                    <Text {...textStyles}>{data.phoneNumber}</Text>
+                    <Text {...textStyles}>{data.email}</Text>
+                    <Text {...textStyles}>{data.address}</Text>
+                    <Text {...textStyles}>{data.linkedin}</Text>
+                </GridItem>
+                <GridItem>
+                    <Heading as="h2" size="md" textAlign={styles.alignment}>
+                        Profile
+                    </Heading>
+                    <Text w="full" whiteSpace="pre-wrap" {...textStyles}>
+                        {data.description}
+                    </Text>
+                </GridItem>
+            </Grid>
+        </>
     )
 }
 
@@ -243,18 +247,30 @@ type StackResumeProps = {
     data: Resume
     layout: { component: React.ReactNode; title: string }[]
     onRemoveSection?: (title: string) => void
+    onSaveStyles: (styles: any, title: string) => void
     disabled?: boolean
+    currentStyles: LayoutStyles
 }
 
-const StackResume: React.FC<StackResumeProps> = ({ data, layout, disabled = false, onRemoveSection }) => {
-    console.log('layout', layout)
+export const StackResume: React.FC<StackResumeProps> = ({
+    data,
+    layout,
+    disabled = false,
+    currentStyles = {},
+    onSaveStyles = () => {},
+    onRemoveSection = () => {}
+}) => {
     return (
         <>
-            {/* <Header data={data} /> */}
             <VStack align="stretch" spacing={6}>
                 {layout.map((section, index) => (
                     <Fragment key={index}>
-                        <StyleControlWrapper onRemoveSection={() => onRemoveSection(section.title)} disabled={disabled}>
+                        <StyleControlWrapper
+                            defaultValue={currentStyles[section.title]}
+                            onSaveStyles={styles => onSaveStyles(styles, section.title)}
+                            onRemoveSection={() => onRemoveSection(section.title)}
+                            disabled={disabled}
+                        >
                             {React.createElement(componentMap[section.title], { data })}
                         </StyleControlWrapper>
                     </Fragment>
@@ -263,5 +279,3 @@ const StackResume: React.FC<StackResumeProps> = ({ data, layout, disabled = fals
         </>
     )
 }
-
-export default StackResume

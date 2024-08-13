@@ -18,27 +18,18 @@ import {
     Flex
 } from '@chakra-ui/react'
 import { Button, Input } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
-import { LayoutStyles } from '../types'
-
-type WatermarkStyle = {
-    fontSize?: string
-    fontColor?: string
-    fontFamily?: string
-    opacity: number
-    watermarkText: string
-}
+import React, { useEffect } from 'react'
+import { WatermarkStyle } from '../types'
+import { useAtom } from 'jotai'
+import { watermarkAtom } from '../atom/watermarkAtom'
 
 type WatermarkProps = {
     applyWatermark: (props: WatermarkStyle) => void
     removeWatermark: () => void
 }
 
-export const useWatermark = (
-    ref: React.RefObject<HTMLDivElement>,
-    watermark: LayoutStyles & { watermarkText: string }
-) => {
-    const [currentWatermark, setCurrentWatermark] = useState({})
+export const useWatermark = (ref: React.RefObject<HTMLDivElement>, watermark?: WatermarkStyle) => {
+    const [_, setCurrentWatermark] = useAtom(watermarkAtom)
     const applyWatermark = (props: WatermarkStyle) => {
         const { watermarkText, fontSize, fontColor, fontFamily, opacity } = props
         const resume = ref.current ?? { width: 0, height: 0, src: {} }
@@ -75,12 +66,11 @@ export const useWatermark = (
     useEffect(() => {
         if (Object.keys(watermark).length === 0) return
         applyWatermark(watermark)
-    }, [watermark])
+    }, [])
 
     return {
         applyWatermark,
-        removeWatermark,
-        currentWatermark
+        removeWatermark
     }
 }
 

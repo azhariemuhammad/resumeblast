@@ -10,21 +10,30 @@ export const useResumeService = () => {
         return data
     }
 
+    const getAllResumes = async (userId: string) => {
+        const { data, error } = await supabase.from('resumes').select('*').eq('user_id', userId)
+        if (error) {
+            console.log(error)
+        }
+        return data
+    }
+
     const saveResume = async ({
         draft,
         layoutTitles,
         watermark,
         userId,
-        resumeId = ''
+        resumeId = '',
+        styles
     }: SaveResumeProps & { userId: string; resumeId?: string }) => {
         const { data, error } = await await supabase
             .from('resumes')
             .upsert({
-                layout_name: 'template-stack',
+                styles,
+                watermark,
                 data: draft,
                 layout: layoutTitles,
-                styles: {},
-                watermark,
+                layout_name: 'template-stack',
                 user_id: userId,
                 ...(resumeId !== '' && { id: resumeId })
             })
@@ -36,5 +45,5 @@ export const useResumeService = () => {
         return data
     }
 
-    return { getResumeById, saveResume }
+    return { getResumeById, saveResume, getAllResumes }
 }

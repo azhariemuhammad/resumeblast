@@ -43,8 +43,8 @@ export const Editor = () => {
                 })
     })
 
-    const handleSave = async ({ draft, layoutTitles, watermark }: SaveResumeProps) => {
-        const data = await saveResume({ draft, layoutTitles, watermark, userId, resumeId })
+    const handleSave = async ({ draft, layoutTitles, watermark, styles }: SaveResumeProps) => {
+        const data = await saveResume({ draft, layoutTitles, watermark, userId, resumeId, styles })
 
         if (data?.[0]?.id) {
             navigate('/editor?resumeId=' + data[0].id, { replace: true })
@@ -53,12 +53,15 @@ export const Editor = () => {
 
     const savedLayout = data?.layout ?? []
     const watermark = data?.watermark ?? {}
+    const styles = data?.styles ?? {}
     console.log({ watermark })
 
     return (
         <Stack>
             <Header />
-            {!isLoading && <EditorLayout watermark={watermark} onSave={handleSave} savedLayout={savedLayout} />}
+            {!isLoading && (
+                <EditorLayout styles={styles} watermark={watermark} onSave={handleSave} savedLayout={savedLayout} />
+            )}
         </Stack>
     )
 }

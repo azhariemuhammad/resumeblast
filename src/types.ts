@@ -54,6 +54,15 @@ export type LayoutStyles = {
 
 export type SaveResumeProps = {
     draft: Resume
-    watermark: LayoutStyles & { watermarkText: string }
+    watermark: WatermarkStyle
     layoutTitles: Array<string>
+    styles: LayoutStyles
+}
+
+export type WatermarkStyle = {
+    fontSize?: string
+    fontColor?: string
+    fontFamily?: string
+    opacity: number
+    watermarkText: string
 }

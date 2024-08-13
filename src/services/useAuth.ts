@@ -10,6 +10,7 @@ const maxAge = 7 * 24 * 60 * 60
 export const useAuth = () => {
     const [_, setCookie] = useCookies(['supabase_session'])
     const [session, setSession] = useState<Session | null>(null)
+    const setUser = useSetAtom(userAtom)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -53,5 +54,16 @@ export const useAuth = () => {
         return { data, error }
     }
 
-    return { session, loading, signUp, signIn }
+    const signOut = async () => {
+        const { error } = await supabase.auth.signOut()
+        if (error) {
+            throw new Error(error.message)
+        }
+        setSession(null)
+        setUser({} as User)
+        setCookie('supabase_session', null, { maxAge })
+        window.location.href = '/'
+    }
+
+    return { session, loading, signUp, signIn, signOut }
 }

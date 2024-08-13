@@ -1,15 +1,18 @@
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { draftAtom } from '../atom/draftAtom'
-import StackResume from '../components/examples/StackResume'
+import { StackResume } from '../components/examples/StackResume'
 import { layoutAtom } from '../atom/layoutAtom'
 import { Box, Button, IconButton } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowBackIcon } from '@chakra-ui/icons'
+import { stylesAtom } from '../atom/stylesAtom'
+import { watermarkAtom } from '../atom/watermarkAtom'
+import { useEffect, useRef } from 'react'
+import { useWatermark } from '../components/Watermark'
 
 const BackButton = () => {
     const navigate = useNavigate()
     return (
-        // circle button
         <IconButton
             aria-label="back"
             my={2}
@@ -28,16 +31,20 @@ const BackButton = () => {
 }
 export const Preview = () => {
     const params = new URLSearchParams(window.location.search)
+    const ref = useRef<HTMLDivElement>(null)
     const template = params.get('template')
-    const [draft, setDraft] = useAtom(draftAtom)
-    const [layout, setLayout] = useAtom(layoutAtom)
+    const draft = useAtomValue(draftAtom)
+    const layout = useAtomValue(layoutAtom)
+    const styles = useAtomValue(stylesAtom)
+    const watermark = useAtomValue(watermarkAtom)
+    useWatermark(ref, watermark)
+    console.log({ draft, layout, styles, watermark })
 
-    console.log({ layout })
     let component: React.ReactNode
 
     switch (template) {
         case 'stack':
-            component = <StackResume data={draft} layout={layout} disabled />
+            component = <StackResume currentStyles={styles} data={draft} layout={layout} disabled />
             break
         case 'cover':
             component = <>Cover</>
@@ -58,6 +65,7 @@ export const Preview = () => {
                 borderRadius="md"
                 bg="white"
                 p={4}
+                ref={ref}
             >
                 {component}
             </Box>

@@ -11,54 +11,34 @@ import {
     MenuList,
     VStack
 } from '@chakra-ui/react'
-import StackResume from './examples/StackResume'
+import { StackResume } from './examples/StackResume'
 
 import { ResumeBuilder } from './ResumeBuilder'
 import { ExperienceInput, PersonalInfoInput, SkillsInput, EducationInput, CertificationsInput } from './SectionForms'
-import { useAtom } from 'jotai'
+import { atom, useAtom } from 'jotai'
 import { layoutAtom } from '../atom/layoutAtom'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
-import { LayoutStyles, Resume, SaveResumeProps } from '../types'
+import { LayoutStyles, Resume, SaveResumeProps, WatermarkStyle } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
 import { ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
 import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
 import { useNavigate } from 'react-router-dom'
 import { AuthWrapper } from './AuthWrapper'
-import { set } from 'date-fns'
-
-export const GridTwoLayout = () => {
-    return (
-        <Box>
-            <div>Grid 2</div>
-        </Box>
-    )
-}
+import { stylesAtom } from '../atom/stylesAtom'
+import { watermarkAtom } from '../atom/watermarkAtom'
 
 type EditorLayoutProps = {
     savedLayout?: Array<string>
     onSave: (values: SaveResumeProps) => void
     children?: React.ReactNode
     colomns?: number
-    watermark: LayoutStyles & { watermarkText: string }
+    styles: LayoutStyles
+    watermark: WatermarkStyle
 }
-export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark = {} }: EditorLayoutProps) => {
+export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark, styles }: EditorLayoutProps) => {
     const [hover, setHover] = useState(false)
-    const [layout, setLayout] = useAtom(layoutAtom)
-    const [draft, setDraft] = useAtom(draftAtom)
-    const navigate = useNavigate()
-    const ref = useRef<HTMLDivElement>(null)
-    const { applyWatermark, removeWatermark, currentWatermark } = useWatermark(ref, watermark)
-    const handleSave = (draft: Resume) => {
-        setDraft(draft)
-    }
-
-    const handleSaveDraft = () => {
-        const layoutTitles = layout.map(section => section.title)
-        onSave({ draft, layoutTitles, watermark: currentWatermark as LayoutStyles & { watermarkText: string } })
-    }
-
     const getComponentByTitle = useCallback((title: string) => {
         switch (title) {
             case 'Personal Info':
@@ -73,6 +53,30 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark 
                 return <CertificationsInput onSave={handleSave} />
         }
     }, [])
+
+    const [currentWatermark, setCurrentWatermark] = useAtom(watermarkAtom)
+    const [layout, setLayout] = useAtom(layoutAtom)
+
+    console.log({ currentWatermark })
+    const [currentStyles, setCurrentStyles] = useAtom(stylesAtom)
+
+    const [draft, setDraft] = useAtom(draftAtom)
+    const navigate = useNavigate()
+    const ref = useRef<HTMLDivElement>(null)
+    const { applyWatermark, removeWatermark } = useWatermark(ref, watermark as WatermarkStyle)
+    const handleSave = (draft: Resume) => {
+        setDraft(draft)
+    }
+
+    const handleSaveDraft = () => {
+        const layoutTitles = layout.map(section => section.title)
+        onSave({
+            draft,
+            layoutTitles,
+            watermark: currentWatermark as WatermarkStyle,
+            styles: currentStyles
+        })
+    }
 
     const onAddSection = (title: string) => {
         const component = getComponentByTitle(title)
@@ -100,6 +104,17 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark 
             setLayout(newLayout)
         }
     }, [])
+
+    useEffect(() => {
+        if (Object.values(styles).length === 0) {
+            return
+        }
+        setCurrentStyles(styles)
+    }, [])
+
+    const handleSaveStyles = (newStyles: any, title) => {
+        setCurrentStyles({ ...currentStyles, [title]: newStyles })
+    }
 
     return (
         <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>
@@ -142,7 +157,13 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark 
                 >
                     <VStack ref={ref} padding={8}>
                         {colomns === 1 && (
-                            <StackResume data={draft} layout={layout} onRemoveSection={onRemoveSection} />
+                            <StackResume
+                                data={draft}
+                                currentStyles={currentStyles}
+                                onSaveStyles={handleSaveStyles}
+                                layout={layout}
+                                onRemoveSection={onRemoveSection}
+                            />
                         )}
                     </VStack>
                     {!hover && (
@@ -160,7 +181,7 @@ export const EditorLayout = ({ onSave, colomns = 1, savedLayout = [], watermark 
                         >
                             <Menu>
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                                    Add new section
+                                    New section
                                 </MenuButton>
                                 <MenuList>
                                     {sectionItems.map(({ title }, index) => (
