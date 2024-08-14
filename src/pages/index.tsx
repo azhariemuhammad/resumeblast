@@ -13,9 +13,9 @@ export const Home = () => {
                 <Container my={16}>
                     <Center>
                         <Stack spacing={4} align="center">
-                            <Heading textAlign="center">CV Blast</Heading>
+                            <Heading textAlign="center">Resume Blast</Heading>
                             <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
-                                Create a beautiful CV in seconds
+                                Create Professional Resumes in Minutes
                             </Text>
                             <Button
                                 onClick={() => navigate('/editor?newtemplate=true')}

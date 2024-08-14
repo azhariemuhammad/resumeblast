@@ -16,10 +16,10 @@ const port = 3000;
 app.use(cors());
 
 const storage = multer.diskStorage({
-  destination: function (_, _, cb) {
+  destination: function (req,res, cb) {
     cb(null, path.join(__dirname, 'screenshots'))
   },
-  filename: function (_, _, cb) {
+  filename: function (req, res, cb) {
     cb(null, 'resume_' + Date.now() + '.png')
   }
 });

@@ -269,7 +269,7 @@ export const EditorLayout = ({
                         </Heading>
                         <Flex justifyContent="flex-end" my={4}>
                             <AuthWrapper onAuthRequired={() => handleSaveDraft()}>
-                                <Button size="md">Save</Button>
+                                <Button size="sm">Save</Button>
                             </AuthWrapper>
                         </Flex>
                         <ResumeBuilder layout={layout} />

@@ -79,7 +79,7 @@ export const Header = () => {
                     textAlign="center"
                     as="h1"
                 >
-                    CV Blast
+                    Resume Blast
                 </Link>
             </Box>
             <Box>
