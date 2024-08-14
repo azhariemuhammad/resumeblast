@@ -10,11 +10,9 @@ import {
     Card,
     CardBody,
     Image,
-    Box,
-    Flex
+    Box
 } from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
-import { useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { config } from '../config'
 
