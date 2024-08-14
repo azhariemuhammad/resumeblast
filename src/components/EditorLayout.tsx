@@ -31,12 +31,14 @@ import { stylesAtom } from '../atom/stylesAtom'
 import { watermarkAtom } from '../atom/watermarkAtom'
 import { Collections } from '../pages/Collections'
 import { useGenerateImage } from '../hooks/useGenerateImage'
+import { TwoColumnLayout } from './examples/TwoColumnLayout'
+import { layoutTypeAtom } from '../atom/layoutTypeAtom'
+import { ResponsiveGridWrapper } from './ResponsiveGridWrapper'
 
 type EditorLayoutProps = {
-    savedLayout?: Array<string>
+    savedLayout: Array<string>
     onSave: (values: SaveResumeProps) => void
     children?: React.ReactNode
-    colomns?: number
     styles: LayoutStyles
     watermark: WatermarkStyle
     isCandidateForm?: boolean
@@ -47,7 +49,6 @@ type EditorLayoutProps = {
 }
 export const EditorLayout = ({
     onSave,
-    colomns = 1,
     watermark,
     isCandidateForm,
     resumeId,
@@ -57,6 +58,7 @@ export const EditorLayout = ({
     defaultLayoutName
 }: EditorLayoutProps) => {
     const hasResumeId = Boolean(resumeId)
+    const [layoutType, setLayoutType] = useAtom(layoutTypeAtom)
     const [status, setStatus] = useState<'loading' | 'done' | 'error'>('done')
     const [hover, setHover] = useState(false)
     const [currentWatermark] = useAtom(watermarkAtom)
@@ -93,7 +95,8 @@ export const EditorLayout = ({
             layoutTitles,
             layoutName,
             watermark: currentWatermark as WatermarkStyle,
-            styles: currentStyles
+            styles: currentStyles,
+            layoutType
         })
     }
 
@@ -124,18 +127,17 @@ export const EditorLayout = ({
         }
     }, [])
 
-    const handleSaveStyles = (newStyles: any, title) => {
+    const handleSaveStyles = (newStyles: LayoutStyles, title: string) => {
         setCurrentStyles({ ...currentStyles, [title]: newStyles })
     }
 
-    const handleChangeDraftTitle = e => {
+    const handleChangeDraftTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         const value = e.target.value
         setLayoutName(value)
     }
 
     const handleOpenEditor = (template: ResumeData) => {
-        // remove isCandidateForm
         onSave({
             draft,
             layoutTitles: template.layout,
@@ -169,13 +171,13 @@ export const EditorLayout = ({
     }
 
     return (
-        <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>
+        <>
             {!isCandidateForm && (
-                <>
-                    <GridItem colSpan={4}>
+                <ResponsiveGridWrapper>
+                    <>
                         <Input
                             type="text"
-                            autoFocus
+                            name="layoutName"
                             placeholder="Untitled template"
                             mb={4}
                             variant="unstyled"
@@ -184,13 +186,22 @@ export const EditorLayout = ({
                             onChange={handleChangeDraftTitle}
                         />
                         <ResumeBuilder layout={layout} />
-                    </GridItem>
-                    <GridItem colSpan={6}>
-                        <Flex justifyContent="space-between" mb={4}>
+                    </>
+                    <>
+                        <Flex justifyContent="space-between" mb={4} flexWrap="wrap" gap={4}>
                             <HStack>
                                 <Button size="sm" variant="outline" rightIcon={<ViewIcon />} onClick={onShowPreview}>
                                     Preview
                                 </Button>
+                                <Menu>
+                                    <MenuButton variant="outline" size="sm" as={Button} rightIcon={<ChevronDownIcon />}>
+                                        Layout
+                                    </MenuButton>
+                                    <MenuList>
+                                        <MenuItem onClick={() => setLayoutType('one-column')}>One column</MenuItem>
+                                        <MenuItem onClick={() => setLayoutType('two-column')}>Two column</MenuItem>
+                                    </MenuList>
+                                </Menu>
                                 <Watermark applyWatermark={applyWatermark} removeWatermark={removeWatermark} />
                             </HStack>
                             <HStack>
@@ -205,9 +216,11 @@ export const EditorLayout = ({
                                     onMouseLeave={() => setHover(false)}
                                 />
                                 {isTemplate && (
-                                    <Button size="sm" onClick={handlePublish} isDisabled={status === 'loading'}>
-                                        Publish
-                                    </Button>
+                                    <AuthWrapper onAuthRequired={() => handlePublish()}>
+                                        <Button size="sm" onClick={handlePublish} isDisabled={status === 'loading'}>
+                                            Publish
+                                        </Button>
+                                    </AuthWrapper>
                                 )}
                             </HStack>
                         </Flex>
@@ -220,7 +233,16 @@ export const EditorLayout = ({
                             bg="white"
                         >
                             <VStack ref={ref} padding={8}>
-                                {colomns === 1 && (
+                                {layoutType === 'two-column' && (
+                                    <TwoColumnLayout
+                                        data={draft}
+                                        currentStyles={currentStyles}
+                                        onSaveStyles={handleSaveStyles}
+                                        layout={layout}
+                                        onRemoveSection={onRemoveSection}
+                                    />
+                                )}
+                                {layoutType === 'one-column' && (
                                     <StackResume
                                         data={draft}
                                         currentStyles={currentStyles}
@@ -258,11 +280,12 @@ export const EditorLayout = ({
                                 </Box>
                             )}
                         </Box>
-                    </GridItem>
-                </>
+                    </>
+                </ResponsiveGridWrapper>
             )}
+
             {isCandidateForm && !hasResumeId && (
-                <>
+                <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>
                     <GridItem colStart={{ base: 10, md: 3 }} colEnd={{ base: 2, md: 9 }}>
                         <Heading fontWeight="600" color="text.primary.800" size={{ base: 'sm', md: 'md' }} mb={4}>
                             Input candidates details
@@ -274,19 +297,15 @@ export const EditorLayout = ({
                         </Flex>
                         <ResumeBuilder layout={layout} />
                     </GridItem>
-                </>
+                </Grid>
             )}
 
             {isCandidateForm && hasResumeId && (
-                <>
-                    <GridItem colSpan={4}>
-                        <ResumeBuilder layout={layout} />
-                    </GridItem>
-                    <GridItem colSpan={6}>
-                        <Collections title="Select a template" isCandidateForm onClick={handleOpenEditor} />
-                    </GridItem>
-                </>
+                <ResponsiveGridWrapper>
+                    <ResumeBuilder layout={layout} />
+                    <Collections title="Select a template" isCandidateForm onClick={handleOpenEditor} />
+                </ResponsiveGridWrapper>
             )}
-        </Grid>
+        </>
     )
 }

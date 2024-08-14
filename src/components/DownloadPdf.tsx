@@ -5,10 +5,9 @@ import { Button } from '@chakra-ui/react'
 type SaveAsPdfButtonProps = {
     onHover: () => void
     onMouseLeave: () => void
-    ref: HTMLDivElement | null
 }
 
-export const SaveAsPdfButton = forwardRef<HTMLButtonElement, SaveAsPdfButtonProps>((props, ref) => {
+export const SaveAsPdfButton = forwardRef<HTMLDivElement, SaveAsPdfButtonProps>((props, ref) => {
     const handlePrint = useReactToPrint({
         content: () => ref.current
     })

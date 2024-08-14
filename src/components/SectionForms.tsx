@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useFormikContext } from 'formik'
 import { useDebounce } from '../hooks/useDebounce'
-import { useEffect } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 
 type AddMoreButtonProps = {
     onAdd: () => void
@@ -39,10 +39,14 @@ export const PersonalInfoInput = ({ onSave }) => {
     const { values, handleChange } = useFormikContext()
 
     const debouncedValues = useDebounce(values, 500)
+    const prevValues = useRef(debouncedValues)
 
     useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
+        if (JSON.stringify(prevValues.current) !== JSON.stringify(debouncedValues)) {
+            onSave(debouncedValues)
+            prevValues.current = debouncedValues
+        }
+    }, [debouncedValues, onSave])
 
     return (
         <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2}>
@@ -51,6 +55,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     First Name
                 </FormLabel>
                 <Input
+                    id="firstName"
                     onChange={handleChange}
                     defaultValue={values.firstName}
                     type="text"
@@ -63,6 +68,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     Last Name
                 </FormLabel>
                 <Input
+                    id="lastName"
                     onChange={handleChange}
                     defaultValue={values.lastName}
                     type="text"
@@ -76,6 +82,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     Email
                 </FormLabel>
                 <Input
+                    id="email"
                     onChange={handleChange}
                     defaultValue={values.email}
                     type="email"
@@ -88,6 +95,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     Phone Number
                 </FormLabel>
                 <Input
+                    id="phoneNumber"
                     onChange={handleChange}
                     defaultValue={values.phoneNumber}
                     type="tel"
@@ -100,6 +108,7 @@ export const PersonalInfoInput = ({ onSave }) => {
                     Address
                 </FormLabel>
                 <Input
+                    id="address"
                     onChange={handleChange}
                     defaultValue={values.address}
                     type="text"
@@ -137,10 +146,14 @@ export const PersonalInfoInput = ({ onSave }) => {
 export const ExperienceInput = ({ onSave }) => {
     const { values, handleChange, setValues } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+    const prevValues = useRef(debouncedValues)
 
     useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
+        if (JSON.stringify(prevValues.current) !== JSON.stringify(debouncedValues)) {
+            onSave(debouncedValues)
+            prevValues.current = debouncedValues
+        }
+    }, [debouncedValues, onSave])
 
     const hanldeAddExperience = () => {
         const newExperience = {
@@ -169,13 +182,14 @@ export const ExperienceInput = ({ onSave }) => {
             {values.experiences &&
                 values.experiences.length > 0 &&
                 values.experiences.map((exp, index) => (
-                    <>
-                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} w="full" key={index}>
+                    <Fragment key={index}>
+                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} w="full">
                             <FormControl>
                                 <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
                                     Title
                                 </FormLabel>
                                 <Input
+                                    id="title"
                                     type="text"
                                     onChange={handleChange}
                                     name={`experiences.${index}.title`}
@@ -188,6 +202,7 @@ export const ExperienceInput = ({ onSave }) => {
                                     Company
                                 </FormLabel>
                                 <Input
+                                    id="company"
                                     defaultValue={exp.company}
                                     onChange={handleChange}
                                     type="text"
@@ -200,6 +215,7 @@ export const ExperienceInput = ({ onSave }) => {
                                     Location
                                 </FormLabel>
                                 <Input
+                                    id="location"
                                     onChange={handleChange}
                                     defaultValue={exp.location}
                                     type="text"
@@ -212,6 +228,7 @@ export const ExperienceInput = ({ onSave }) => {
                                     Start Date
                                 </FormLabel>
                                 <Input
+                                    id="startDate"
                                     onChange={handleChange}
                                     defaultValue={exp.startDate}
                                     type="date"
@@ -224,6 +241,7 @@ export const ExperienceInput = ({ onSave }) => {
                                     End Date
                                 </FormLabel>
                                 <Input
+                                    id="endDate"
                                     onChange={handleChange}
                                     defaultValue={exp.endDate}
                                     type="date"
@@ -236,6 +254,7 @@ export const ExperienceInput = ({ onSave }) => {
                                     Description
                                 </FormLabel>
                                 <Textarea
+                                    id="description"
                                     onChange={handleChange}
                                     defaultValue={exp.description}
                                     name={`experiences.${index}.description`}
@@ -247,7 +266,7 @@ export const ExperienceInput = ({ onSave }) => {
                             onAdd={hanldeAddExperience}
                             onRemove={index === values.experiences.length - 1 ? undefined : handleRemoveExperience}
                         />
-                    </>
+                    </Fragment>
                 ))}
         </VStack>
     )
@@ -256,6 +275,14 @@ export const ExperienceInput = ({ onSave }) => {
 export const SkillsInput = ({ onSave }) => {
     const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+    const prevValues = useRef(debouncedValues)
+
+    useEffect(() => {
+        if (JSON.stringify(prevValues.current) !== JSON.stringify(debouncedValues)) {
+            onSave(debouncedValues)
+            prevValues.current = debouncedValues
+        }
+    }, [debouncedValues, onSave])
 
     const handleAddSkill = () => {
         const newSkill = {
@@ -275,10 +302,6 @@ export const SkillsInput = ({ onSave }) => {
         })
     }
 
-    useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
-
     return (
         <>
             {values.skills?.map((skill, index) => (
@@ -289,6 +312,7 @@ export const SkillsInput = ({ onSave }) => {
                                 Name
                             </FormLabel>
                             <Input
+                                id="name"
                                 onChange={handleChange}
                                 defaultValue={skill.name}
                                 type="text"
@@ -301,6 +325,7 @@ export const SkillsInput = ({ onSave }) => {
                                 Score
                             </FormLabel>
                             <Input
+                                id="score"
                                 onChange={handleChange}
                                 defaultValue={skill.score}
                                 type="number"
@@ -322,6 +347,14 @@ export const SkillsInput = ({ onSave }) => {
 export const EducationInput = ({ onSave }) => {
     const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+    const prevValues = useRef(debouncedValues)
+
+    useEffect(() => {
+        if (JSON.stringify(prevValues.current) !== JSON.stringify(debouncedValues)) {
+            onSave(debouncedValues)
+            prevValues.current = debouncedValues
+        }
+    }, [debouncedValues, onSave])
 
     const handleAddEducation = () => {
         const newEducation = {
@@ -337,10 +370,6 @@ export const EducationInput = ({ onSave }) => {
         })
     }
 
-    useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
-
     return (
         <>
             {values.education?.map((edu, index) => (
@@ -350,6 +379,7 @@ export const EducationInput = ({ onSave }) => {
                             Degree
                         </FormLabel>
                         <Input
+                            id="degree"
                             onChange={handleChange}
                             defaultValue={edu.degree}
                             type="text"
@@ -362,6 +392,7 @@ export const EducationInput = ({ onSave }) => {
                             Major
                         </FormLabel>
                         <Input
+                            id="major"
                             onChange={handleChange}
                             defaultValue={edu.major}
                             type="text"
@@ -374,6 +405,7 @@ export const EducationInput = ({ onSave }) => {
                             University
                         </FormLabel>
                         <Input
+                            id="university"
                             onChange={handleChange}
                             defaultValue={edu.university}
                             type="text"
@@ -386,6 +418,7 @@ export const EducationInput = ({ onSave }) => {
                             School
                         </FormLabel>
                         <Input
+                            id="school"
                             onChange={handleChange}
                             defaultValue={edu.school}
                             type="text"
@@ -398,11 +431,38 @@ export const EducationInput = ({ onSave }) => {
                             Location
                         </FormLabel>
                         <Input
+                            id="location"
                             onChange={handleChange}
                             defaultValue={edu.location}
                             type="text"
                             name={`education.${index}.location`}
                             placeholder="Location"
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="startDate">
+                            Start Date
+                        </FormLabel>
+                        <Input
+                            id="startDate"
+                            onChange={handleChange}
+                            defaultValue={edu.startDate}
+                            type="date"
+                            name={`education.${index}.startDate`}
+                            placeholder="Start Date"
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="endDate">
+                            End Date
+                        </FormLabel>
+                        <Input
+                            id="endDate"
+                            onChange={handleChange}
+                            defaultValue={edu.endDate}
+                            type="date"
+                            name={`education.${index}.endDate`}
+                            placeholder="End Date"
                         />
                     </FormControl>
                 </Grid>
@@ -415,6 +475,14 @@ export const EducationInput = ({ onSave }) => {
 export const CertificationsInput = ({ onSave }) => {
     const { values, setValues, handleChange } = useFormikContext()
     const debouncedValues = useDebounce(values, 500)
+    const prevValues = useRef(debouncedValues)
+
+    useEffect(() => {
+        if (JSON.stringify(prevValues.current) !== JSON.stringify(debouncedValues)) {
+            onSave(debouncedValues)
+            prevValues.current = debouncedValues
+        }
+    }, [debouncedValues, onSave])
 
     const handleAddCertification = () => {
         const newCertification = {
@@ -427,9 +495,6 @@ export const CertificationsInput = ({ onSave }) => {
         })
     }
 
-    useEffect(() => {
-        onSave(debouncedValues)
-    }, [debouncedValues])
     return (
         <>
             {values.certifications?.map((cert, index) => (

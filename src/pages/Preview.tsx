@@ -36,15 +36,12 @@ type PreviewProps = {
     onHidePreview: () => void
 }
 export const Preview = ({ onHidePreview }: PreviewProps) => {
-    const params = new URLSearchParams(window.location.search)
     const ref = useRef<HTMLDivElement>(null)
-    const template = params.get('template')
     const draft = useAtomValue(draftAtom)
     const layout = useAtomValue(layoutAtom)
     const styles = useAtomValue(stylesAtom)
     const watermark = useAtomValue(watermarkAtom)
     useWatermark(ref, watermark)
-    console.log({ draft, layout, styles, watermark, template })
 
     return (
         <>

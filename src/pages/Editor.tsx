@@ -62,7 +62,8 @@ export const Editor = () => {
         watermark,
         styles,
         layoutName,
-        redirectTo
+        redirectTo,
+        layoutType
     }: SaveResumeProps) => {
         const data = await saveResume({
             draft,
@@ -73,7 +74,8 @@ export const Editor = () => {
             resumeId,
             styles,
             layoutName,
-            isTemplate
+            isTemplate,
+            layoutType
         })
         if (redirectTo) {
             window.location.href = redirectTo

@@ -14,7 +14,7 @@ type SectionProps = {
         alignment: 'left' | 'center' | 'right'
     }
 }
-const Header = ({ data }) => {
+const Header = ({ data }: SectionProps) => {
     return (
         <HStack spacing={12} alignItems="flex-start" mb={8}>
             <Image
@@ -44,8 +44,7 @@ const PersonalInfo = ({ data, styles }: SectionProps) => {
 
     return (
         <>
-            <Header data={data} />
-
+            <Header data={data} styles={styles} />
             <Grid
                 gridAutoColumns={styles.layout === 'col' ? 'repeat(10, 1fr)' : '1fr'}
                 gap={4}

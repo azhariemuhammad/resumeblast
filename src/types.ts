@@ -50,6 +50,7 @@ export type LayoutStyles = {
     fontFamily: string
     layout: 'row' | 'col'
     alignment: 'left' | 'center' | 'right'
+    bgColor?: string
 }
 
 export type SaveResumeProps = {
@@ -61,6 +62,7 @@ export type SaveResumeProps = {
     redirectTo?: string
     imageUrl?: string
     isTemplate?: boolean
+    layoutType?: 'two-column' | 'one-column'
 }
 
 export type WatermarkStyle = {

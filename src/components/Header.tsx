@@ -53,6 +53,7 @@ export const Header = () => {
     const isLoggedIn = session !== null
     const [user] = useAtom(userAtom)
     const name = user?.name ?? ''
+    const agencyName = user?.agency_name ?? ''
 
     return (
         <Flex
@@ -89,6 +90,17 @@ export const Header = () => {
                             <Avatar name={name} size="sm" showName />
                         </MenuButton>
                         <MenuList fontSize="sm">
+                            <Text
+                                fontWeight="medium"
+                                px={4}
+                                pb={4}
+                                textStyle="uppercase"
+                                color="secondary.800"
+                                fontSize="md"
+                            >
+                                {agencyName}
+                            </Text>
+
                             <MenuItem onClick={() => navigate('/collections')}>Collections</MenuItem>
                             <MenuItem onClick={signOut}>Sign Out</MenuItem>
                         </MenuList>

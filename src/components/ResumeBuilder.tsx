@@ -1,17 +1,18 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react'
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Text } from '@chakra-ui/react'
 import { Formik } from 'formik'
 import { useAtom } from 'jotai'
 import { draftAtom } from '../atom/draftAtom'
+import { memo } from 'react'
 
 type ResumeBuilderProps = {
     layout: Array<{ component: React.ReactNode; title: string }>
 }
 
-export const ResumeBuilder = ({ layout }: ResumeBuilderProps) => {
+export const ResumeBuilder = memo(({ layout }: ResumeBuilderProps) => {
     const [draft, _] = useAtom(draftAtom)
 
     return (
-        <Accordion allowToggle w="full" gap={4} defaultIndex={[0]}>
+        <Accordion allowToggle w="full" gap={4} id="resume-builder" defaultIndex={[0]}>
             <Formik initialValues={draft} onSubmit={() => console.log('submit')}>
                 <>
                     {layout.map((acc, index) => (
@@ -30,11 +31,13 @@ export const ResumeBuilder = ({ layout }: ResumeBuilderProps) => {
                                     <AccordionIcon />
                                 </AccordionButton>
                             </h2>
-                            <AccordionPanel pb={4}>{acc.component}</AccordionPanel>
+                            <AccordionPanel pb={4} key={index}>
+                                {acc.component}
+                            </AccordionPanel>
                         </AccordionItem>
                     ))}
                 </>
             </Formik>
         </Accordion>
     )
-}
+})

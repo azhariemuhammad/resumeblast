@@ -18,7 +18,7 @@ export const Home = () => {
                                 Create Professional Resumes in Minutes
                             </Text>
                             <Button
-                                onClick={() => navigate('/editor?newtemplate=true')}
+                                onClick={() => (window.location.href = '/editor?newtemplate=true')}
                                 colorScheme="primary"
                                 variant="solid"
                                 size="lg"
@@ -30,7 +30,7 @@ export const Home = () => {
                                 or
                             </Text>
                             <Button
-                                onClick={() => navigate('/editor?isCandidateForm=true')}
+                                onClick={() => (window.location.href = '/editor?isCandidateForm=true')}
                                 colorScheme="primary"
                                 variant="solid"
                                 size="lg"

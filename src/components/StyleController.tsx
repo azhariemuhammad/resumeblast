@@ -11,14 +11,18 @@ import {
     Button,
     Flex
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { AlignSwitch } from './AlignSwitch'
+import { LayoutStyles } from '../types'
 
 type StyleControlWrapperProps = {
-    children: React.ReactNode
+    children: ((styles: any) => ReactNode) | ReactNode
     onSaveStyles: (styles: any) => void
     onRemoveSection: () => void
     disabled?: boolean
+    height?: string
+    placement?: string
+    defaultValue?: LayoutStyles
 }
 
 type StyleControlsProps = {
@@ -119,6 +123,18 @@ const StyleControls = ({ styles, onStyleChange, onRemoveSection }: StyleControls
                 />
             </VStack>
             <VStack spacing={1}>
+                <FormLabel fontSize="xs" htmlFor="fontColor" m={0}>
+                    Background Color:
+                </FormLabel>
+                <Input
+                    size="sm"
+                    id="bgColor"
+                    type="color"
+                    value={styles.bgColor}
+                    onChange={e => onStyleChange('bgColor', e.target.value)}
+                />
+            </VStack>
+            <VStack spacing={1}>
                 <FormLabel htmlFor="fontFamily" fontSize="xs" m={0}>
                     Typeface:
                 </FormLabel>
@@ -155,18 +171,21 @@ export const StyleControlWrapper = ({
     children,
     onRemoveSection,
     disabled,
+    height = 'auto',
     onSaveStyles,
+    placement = 'bottom-end',
     defaultValue = {
         fontSize: 'md',
         color: '#000000',
         fontFamily: "'Helvetica', sans-serif",
         layout: 'col',
-        alignment: 'left'
+        alignment: 'left',
+        bgColor: '#A7E6FF'
     }
 }: StyleControlWrapperProps) => {
     const [styles, setStyles] = useState(defaultValue)
 
-    const handleStyleChange = (property, value) => {
+    const handleStyleChange = (property: string, value: string) => {
         setStyles(prevStyles => ({
             ...prevStyles,
             [property]: value
@@ -177,32 +196,45 @@ export const StyleControlWrapper = ({
         })
     }
 
+    const renderContent = () => {
+        if (typeof children === 'function') {
+            return children(styles)
+        }
+        return React.isValidElement(children) ? React.cloneElement(children, { styles }) : children
+    }
+
+    if (disabled) {
+        return <Box>{renderContent()}</Box>
+    }
+
+    const handleMouseEnter = (event: React.MouseEvent) => {
+        event.stopPropagation()
+    }
+
     return (
-        <>
-            {!disabled ? (
-                <Popover trigger="hover" placement="top-end">
-                    <PopoverTrigger>
-                        <Box
-                            border="1px solid transparent"
-                            _hover={{ border: '1px solid', borderColor: 'primary.200' }}
-                            transition="border-color 0.2s"
-                        >
-                            {React.Children.map(children, child => React.cloneElement(child, { styles }))}
-                        </Box>
-                    </PopoverTrigger>
-                    <PopoverContent p={0} bg="white">
-                        <PopoverBody>
-                            <StyleControls
-                                styles={styles}
-                                onStyleChange={handleStyleChange}
-                                onRemoveSection={onRemoveSection}
-                            />
-                        </PopoverBody>
-                    </PopoverContent>
-                </Popover>
-            ) : (
-                <Box>{React.Children.map(children, child => React.cloneElement(child, { styles }))}</Box>
-            )}
-        </>
+        <Popover trigger="hover" placement={placement}>
+            <PopoverTrigger>
+                <Box
+                    border="1px solid transparent"
+                    _hover={{ border: '1px solid', borderColor: 'primary.200' }}
+                    transition="border-color 0.2s"
+                    height={height}
+                    w="full"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseEnter}
+                >
+                    {renderContent()}
+                </Box>
+            </PopoverTrigger>
+            <PopoverContent p={0} bg="white">
+                <PopoverBody>
+                    <StyleControls
+                        styles={styles}
+                        onStyleChange={handleStyleChange}
+                        onRemoveSection={onRemoveSection}
+                    />
+                </PopoverBody>
+            </PopoverContent>
+        </Popover>
     )
 }

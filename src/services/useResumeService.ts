@@ -1,5 +1,5 @@
 import supabase from '../supabaseClient'
-import { Resume, ResumeData, SaveResumeProps } from '../types'
+import { ResumeData, SaveResumeProps } from '../types'
 
 export const useResumeService = () => {
     const getResumeById = async (resumeId: string) => {
@@ -35,7 +35,8 @@ export const useResumeService = () => {
         styles,
         layoutName = '',
         imageUrl = '',
-        isTemplate = false
+        isTemplate = false,
+        layoutType = 'one-column'
     }: SaveResumeProps & { userId: string; resumeId?: string }) => {
         const { data, error } = await await supabase
             .from('resumes')
@@ -48,6 +49,7 @@ export const useResumeService = () => {
                 is_template: isTemplate,
                 image: imageUrl,
                 user_id: userId,
+                layout_type: layoutType,
                 ...(resumeId !== '' && { id: resumeId })
             })
             .select()
