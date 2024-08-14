@@ -11,11 +11,7 @@ export const useGetResumes = () => {
 
     return { getResumeByUser }
 }
-type User = {
-    name: string
-    email: string
-    agency_name: string
-}
+
 export const useUserService = () => {
     const createNewUser = async (user: {}) => {
         try {

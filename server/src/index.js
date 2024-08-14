@@ -1,16 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv'
 import multer from 'multer';
 import { promises as fsPromises } from 'fs';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+dotenv.config()
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const app = express();
-const port = 3000;
+const port = 3005;
+const baseURL = process.env.BASE_URL ?? `http://localhost:${port}`
 
 
 app.use(cors());
@@ -36,7 +38,7 @@ app.post('/upload-resume-image', upload.single('image'), async (req, res) => {
       success: true, 
       message: 'Resume image uploaded successfully',
       filename: req.file.filename,
-      src: 'http://localhost:3000/resume-image/' + req.file.filename
+      src: `${baseURL}/resume-image/${req.file.filename}`
     });
   } catch (error) {
     console.error('Error uploading resume image:', error);

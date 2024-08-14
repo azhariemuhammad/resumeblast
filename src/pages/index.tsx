@@ -16,12 +16,13 @@ import {
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
+import { config } from '../config'
 
 export const Home = () => {
     const resumePhotos = [
-        'http://localhost:3000/resume-image/template-1.png',
-        'http://localhost:3000/resume-image/template-2.png',
-        'http://localhost:3000/resume-image/template-2.png'
+        `${config.baseUrl}/resume-image/template-1.png`,
+        `${config.baseUrl}/resume-image/template-2.png`,
+        `${config.baseUrl}/resume-image/template-2.png`
     ]
 
     return (

@@ -17,4 +17,9 @@ export default defineConfig({
     globals: true,
     setupFiles: './setupTests.js',
   },
+  define: {
+    'process.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL),
+    'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY),
+    'VITE_BASE_URL': JSON.stringify(process.env.VITE_BASE_URL),
+  },
 })

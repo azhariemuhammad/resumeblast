@@ -1,6 +1,8 @@
+import { config } from '../config'
+
 export const useUploadResumeImage = () => {
     const uploadResumeImage = async (body: string) => {
-        const response = await fetch('http://localhost:3000/upload-resume-image', {
+        const response = await fetch(`${config.baseUrl}/upload-resume-image`, {
             method: 'POST',
             body
         })
