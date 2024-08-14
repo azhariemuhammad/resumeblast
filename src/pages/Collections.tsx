@@ -8,10 +8,11 @@ import {
     Card,
     Image,
     CardBody,
-    CardHeader,
     CardFooter,
     Button,
-    Heading
+    Heading,
+    Text,
+    AspectRatio
 } from '@chakra-ui/react'
 import { useAtom } from 'jotai'
 import { userAtom } from '../atom/userAtom'
@@ -22,11 +23,12 @@ import { useAuth } from '../services/useAuth'
 import { ResumeData } from '../types'
 
 type CollectionsProps = {
+    title?: string
     isCandidateForm?: boolean
     onClick?: (resume: Resume) => void
 }
 
-export const Collections = ({ isCandidateForm, onClick = () => {} }: CollectionsProps) => {
+export const Collections = ({ isCandidateForm, title, onClick = () => {} }: CollectionsProps) => {
     const toast = useToast()
 
     const { getAllTemplates } = useResumeService()
@@ -62,13 +64,26 @@ export const Collections = ({ isCandidateForm, onClick = () => {} }: Collections
     }
 
     const renderGridView = () => (
-        <Grid templateColumns={{ sm: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6} w="full">
+        <Grid templateColumns={{ sm: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6} w="full">
             {data?.map((resume: ResumeData) => (
                 <GridItem w="full" h={{ sm: 'auto', md: 'auto' }} key={resume.id}>
-                    <Card p="0">
-                        <CardHeader>Template: {resume.layout_name}</CardHeader>
+                    <Card
+                        p="0"
+                        boxShadow="0px 3px 12px rgba(0, 0, 0, 0.09)"
+                        transition="all 0.3s ease-in-out"
+                        _hover={{
+                            transform: 'scale(1.03)',
+                            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
+                            cursor: 'pointer'
+                        }}
+                    >
                         <CardBody p="0">
-                            <Image alt="Cv Image" src="https://placehold.co/400" w="full" objectFit="cover" />
+                            <AspectRatio ratio={1 / 1}>
+                                <Image alt="Cv Image" src={resume.image} objectFit="contain" height="700px" />
+                            </AspectRatio>
+                            <Text fontSize="md" p={2}>
+                                {resume.layout_name}
+                            </Text>
                         </CardBody>
                         <CardFooter justifyContent="flex-end" p={2}>
                             <Button variant="outline" colorScheme="primary" onClick={() => onClick(resume)} size="sm">
@@ -84,8 +99,8 @@ export const Collections = ({ isCandidateForm, onClick = () => {} }: Collections
     return (
         <>
             <Container maxW="container.xl" padding="2">
-                <Heading m={4} fontSize="xl">
-                    CV Templates
+                <Heading mb={8} fontSize="xl">
+                    {title ?? 'CV Templates'}
                 </Heading>
                 <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={6}>
                     {renderGridView()}

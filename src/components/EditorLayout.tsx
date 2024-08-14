@@ -2,7 +2,6 @@ import {
     Box,
     Button,
     Flex,
-    FormLabel,
     Grid,
     GridItem,
     HStack,
@@ -18,20 +17,20 @@ import { StackResume } from './examples/StackResume'
 
 import { ResumeBuilder } from './ResumeBuilder'
 import { ExperienceInput, PersonalInfoInput, SkillsInput, EducationInput, CertificationsInput } from './SectionForms'
-import { atom, useAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { layoutAtom } from '../atom/layoutAtom'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { draftAtom } from '../atom/draftAtom'
 import { LayoutStyles, Resume, ResumeData, SaveResumeProps, WatermarkStyle } from '../types'
 import { SaveAsPdfButton } from './DownloadPdf'
 import { ChevronDownIcon, ViewIcon } from '@chakra-ui/icons'
 import { Watermark, useWatermark } from './Watermark'
 import { sectionItems } from './shared'
-import { Form, redirect, useNavigate } from 'react-router-dom'
 import { AuthWrapper } from './AuthWrapper'
 import { stylesAtom } from '../atom/stylesAtom'
 import { watermarkAtom } from '../atom/watermarkAtom'
 import { Collections } from '../pages/Collections'
+import { useGenerateImage } from '../hooks/useGenerateImage'
 
 type EditorLayoutProps = {
     savedLayout?: Array<string>
@@ -42,6 +41,8 @@ type EditorLayoutProps = {
     watermark: WatermarkStyle
     isCandidateForm?: boolean
     resumeId?: string
+    isTemplate?: boolean
+    defaultLayoutName?: string
     onShowPreview: () => void
 }
 export const EditorLayout = ({
@@ -51,21 +52,20 @@ export const EditorLayout = ({
     isCandidateForm,
     resumeId,
     savedLayout,
-    onShowPreview
+    onShowPreview,
+    isTemplate,
+    defaultLayoutName
 }: EditorLayoutProps) => {
     const hasResumeId = Boolean(resumeId)
+    const [status, setStatus] = useState<'loading' | 'done' | 'error'>('done')
     const [hover, setHover] = useState(false)
-
     const [currentWatermark] = useAtom(watermarkAtom)
     const [layout, setLayout] = useAtom(layoutAtom)
-    const [layoutName, setLayoutName] = useState('')
-
+    const [layoutName, setLayoutName] = useState(defaultLayoutName)
     const [currentStyles, setCurrentStyles] = useAtom(stylesAtom)
-
     const [draft, setDraft] = useAtom(draftAtom)
-    console.log({ draft })
-    const navigate = useNavigate()
     const ref = useRef<HTMLDivElement>(null)
+    const { generateImage } = useGenerateImage(ref)
     const { applyWatermark, removeWatermark } = useWatermark(ref, watermark as WatermarkStyle)
     const handleSave = (draft: Resume) => {
         setDraft(draft)
@@ -146,6 +146,28 @@ export const EditorLayout = ({
         })
     }
 
+    const handlePublish = async () => {
+        setStatus('loading')
+
+        let imageUrl = ''
+        try {
+            imageUrl = await generateImage()
+        } catch (err) {
+            console.error(err)
+        } finally {
+            onSave({
+                draft,
+                layoutTitles: layout.map(section => section.title),
+                layoutName,
+                styles: currentStyles,
+                watermark: currentWatermark as WatermarkStyle,
+                imageUrl: imageUrl ?? '',
+                redirectTo: `/collections`
+            })
+            setStatus('done')
+        }
+    }
+
     return (
         <Grid templateColumns="repeat(10, 1fr)" gap={4} p={4}>
             {!isCandidateForm && (
@@ -158,6 +180,7 @@ export const EditorLayout = ({
                             mb={4}
                             variant="unstyled"
                             fontSize="xl"
+                            defaultValue={defaultLayoutName}
                             onChange={handleChangeDraftTitle}
                         />
                         <ResumeBuilder layout={layout} />
@@ -172,7 +195,7 @@ export const EditorLayout = ({
                             </HStack>
                             <HStack>
                                 <AuthWrapper onAuthRequired={() => handleSaveDraft()}>
-                                    <Button variant="ghost" size="sm">
+                                    <Button variant="ghost" size="sm" isDisabled={status === 'loading'}>
                                         Save
                                     </Button>
                                 </AuthWrapper>
@@ -181,6 +204,11 @@ export const EditorLayout = ({
                                     onHover={() => setHover(true)}
                                     onMouseLeave={() => setHover(false)}
                                 />
+                                {isTemplate && (
+                                    <Button size="sm" onClick={handlePublish} isDisabled={status === 'loading'}>
+                                        Publish
+                                    </Button>
+                                )}
                             </HStack>
                         </Flex>
                         <Box
@@ -255,7 +283,7 @@ export const EditorLayout = ({
                         <ResumeBuilder layout={layout} />
                     </GridItem>
                     <GridItem colSpan={6}>
-                        <Collections isCandidateForm onClick={handleOpenEditor} />
+                        <Collections title="Select a template" isCandidateForm onClick={handleOpenEditor} />
                     </GridItem>
                 </>
             )}

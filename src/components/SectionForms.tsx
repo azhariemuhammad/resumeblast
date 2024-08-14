@@ -16,14 +16,21 @@ import { useEffect } from 'react'
 
 type AddMoreButtonProps = {
     onAdd: () => void
+    onRemove?: () => void
 }
 
-const AddMoreButton = ({ onAdd }: AddMoreButtonProps) => (
+const AddMoreButton = ({ onAdd, onRemove }: AddMoreButtonProps) => (
     <SimpleGrid columns={10} justifyContent="center" w="full" gap={2}>
-        <GridItem colStart={{ base: 1, md: 5 }} colSpan={{ base: 10, md: 2 }}>
-            <Button w="100%" aria-label="add experience" variant="outline" onClick={onAdd}>
-                Add more +
-            </Button>
+        <GridItem colStart={{ base: 1, md: 5 }} colSpan={{ base: 10, md: 2 }} w="full">
+            {onRemove ? (
+                <Button w="100%" aria-label="remove" size="sm" variant="outline" onClick={onRemove}>
+                    Remove
+                </Button>
+            ) : (
+                <Button w="100%" aria-label="add" size="sm" variant="outline" onClick={onAdd}>
+                    Add more +
+                </Button>
+            )}
         </GridItem>
     </SimpleGrid>
 )
@@ -150,86 +157,98 @@ export const ExperienceInput = ({ onSave }) => {
         })
     }
 
+    const handleRemoveExperience = () => {
+        setValues({
+            ...values,
+            experiences: values.experiences.filter((_, index) => index !== values.experiences.length - 1)
+        })
+    }
+
     return (
         <VStack gap={8} w="full">
             {values.experiences &&
                 values.experiences.length > 0 &&
                 values.experiences.map((exp, index) => (
-                    <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} w="full" key={index}>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
-                                Title
-                            </FormLabel>
-                            <Input
-                                type="text"
-                                onChange={handleChange}
-                                name={`experiences.${index}.title`}
-                                placeholder="Title"
-                                defaultValue={exp.title}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="company">
-                                Company
-                            </FormLabel>
-                            <Input
-                                defaultValue={exp.company}
-                                onChange={handleChange}
-                                type="text"
-                                name={`experiences.${index}.company`}
-                                placeholder="Company"
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="location">
-                                Location
-                            </FormLabel>
-                            <Input
-                                onChange={handleChange}
-                                defaultValue={exp.location}
-                                type="text"
-                                name={`experiences.${index}.location`}
-                                placeholder="Location"
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="startDate">
-                                Start Date
-                            </FormLabel>
-                            <Input
-                                onChange={handleChange}
-                                defaultValue={exp.startDate}
-                                type="date"
-                                name={`experiences.${index}.startDate`}
-                                placeholder="Start Date"
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="endDate">
-                                End Date
-                            </FormLabel>
-                            <Input
-                                onChange={handleChange}
-                                defaultValue={exp.endDate}
-                                type="date"
-                                name={`experiences.${index}.endDate`}
-                                placeholder="End Date"
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="description">
-                                Description
-                            </FormLabel>
-                            <Textarea
-                                onChange={handleChange}
-                                defaultValue={exp.description}
-                                name={`experiences.${index}.description`}
-                                placeholder="Description"
-                            />
-                        </FormControl>
-                    </Grid>
+                    <>
+                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} w="full" key={index}>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="title">
+                                    Title
+                                </FormLabel>
+                                <Input
+                                    type="text"
+                                    onChange={handleChange}
+                                    name={`experiences.${index}.title`}
+                                    placeholder="Title"
+                                    defaultValue={exp.title}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="company">
+                                    Company
+                                </FormLabel>
+                                <Input
+                                    defaultValue={exp.company}
+                                    onChange={handleChange}
+                                    type="text"
+                                    name={`experiences.${index}.company`}
+                                    placeholder="Company"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="location">
+                                    Location
+                                </FormLabel>
+                                <Input
+                                    onChange={handleChange}
+                                    defaultValue={exp.location}
+                                    type="text"
+                                    name={`experiences.${index}.location`}
+                                    placeholder="Location"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="startDate">
+                                    Start Date
+                                </FormLabel>
+                                <Input
+                                    onChange={handleChange}
+                                    defaultValue={exp.startDate}
+                                    type="date"
+                                    name={`experiences.${index}.startDate`}
+                                    placeholder="Start Date"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="endDate">
+                                    End Date
+                                </FormLabel>
+                                <Input
+                                    onChange={handleChange}
+                                    defaultValue={exp.endDate}
+                                    type="date"
+                                    name={`experiences.${index}.endDate`}
+                                    placeholder="End Date"
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel color="text.secondary" fontSize="xs" htmlFor="description">
+                                    Description
+                                </FormLabel>
+                                <Textarea
+                                    onChange={handleChange}
+                                    defaultValue={exp.description}
+                                    name={`experiences.${index}.description`}
+                                    placeholder="Description"
+                                />
+                            </FormControl>
+                        </Grid>
+                        <AddMoreButton
+                            onAdd={hanldeAddExperience}
+                            onRemove={index === values.experiences.length - 1 ? undefined : handleRemoveExperience}
+                        />
+                    </>
                 ))}
-            <AddMoreButton onAdd={hanldeAddExperience} />
         </VStack>
     )
 }
@@ -249,6 +268,13 @@ export const SkillsInput = ({ onSave }) => {
         })
     }
 
+    const handleRemoveSkill = () => {
+        setValues({
+            ...values,
+            skills: values.skills.filter((_, index) => index !== values.skills.length - 1)
+        })
+    }
+
     useEffect(() => {
         onSave(debouncedValues)
     }, [debouncedValues])
@@ -256,34 +282,39 @@ export const SkillsInput = ({ onSave }) => {
     return (
         <>
             {values.skills?.map((skill, index) => (
-                <Grid key={index} templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} mb={4}>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">
-                            Name
-                        </FormLabel>
-                        <Input
-                            onChange={handleChange}
-                            defaultValue={skill.name}
-                            type="text"
-                            name={`skills.${index}.name`}
-                            placeholder="Name"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel color="text.secondary" fontSize="xs" htmlFor="score">
-                            Score
-                        </FormLabel>
-                        <Input
-                            onChange={handleChange}
-                            defaultValue={skill.score}
-                            type="number"
-                            name={`skills.${index}.score`}
-                            placeholder="Score"
-                        />
-                    </FormControl>
-                </Grid>
+                <>
+                    <Grid key={index} templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={2} mb={4}>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="name">
+                                Name
+                            </FormLabel>
+                            <Input
+                                onChange={handleChange}
+                                defaultValue={skill.name}
+                                type="text"
+                                name={`skills.${index}.name`}
+                                placeholder="Name"
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel color="text.secondary" fontSize="xs" htmlFor="score">
+                                Score
+                            </FormLabel>
+                            <Input
+                                onChange={handleChange}
+                                defaultValue={skill.score}
+                                type="number"
+                                name={`skills.${index}.score`}
+                                placeholder="Score"
+                            />
+                        </FormControl>
+                    </Grid>
+                    <AddMoreButton
+                        onAdd={handleAddSkill}
+                        onRemove={index === values.skills.length - 1 ? undefined : handleRemoveSkill}
+                    />
+                </>
             ))}
-            <AddMoreButton onAdd={handleAddSkill} />
         </>
     )
 }

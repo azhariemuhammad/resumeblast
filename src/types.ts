@@ -59,6 +59,8 @@ export type SaveResumeProps = {
     styles: LayoutStyles
     layoutName?: string
     redirectTo?: string
+    imageUrl?: string
+    isTemplate?: boolean
 }
 
 export type WatermarkStyle = {
@@ -80,4 +82,5 @@ export type ResumeData = {
     updated_at: string
     layout: Array<string>
     is_template: boolean
+    image: string
 }

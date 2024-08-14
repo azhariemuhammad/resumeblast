@@ -18,7 +18,7 @@ export const Home = () => {
                                 Create a beautiful CV in seconds
                             </Text>
                             <Button
-                                onClick={() => navigate('/editor')}
+                                onClick={() => navigate('/editor?newtemplate=true')}
                                 colorScheme="primary"
                                 variant="solid"
                                 size="lg"

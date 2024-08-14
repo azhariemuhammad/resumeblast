@@ -22,6 +22,7 @@ export const Editor = () => {
 
     const urlParams = new URLSearchParams(window.location.search)
     const resumeId = urlParams.get('resumeId') ?? ''
+    const newTemplate = urlParams.get('newtemplate') === 'true'
     const isCandidateForm = urlParams.get('isCandidateForm') === 'true'
 
     const { saveResume, getResumeById } = useResumeService()
@@ -49,8 +50,31 @@ export const Editor = () => {
                 })
     })
 
-    const handleSave = async ({ draft, layoutTitles, watermark, styles, layoutName, redirectTo }: SaveResumeProps) => {
-        const data = await saveResume({ draft, layoutTitles, watermark, userId, resumeId, styles, layoutName })
+    let savedLayout = data?.layout ?? []
+    const draft = data?.data ?? baseDraft
+    const isTemplate = data?.is_template ?? newTemplate
+    const defaultLayoutName = data?.layout_name ?? ''
+
+    const handleSave = async ({
+        draft,
+        imageUrl,
+        layoutTitles,
+        watermark,
+        styles,
+        layoutName,
+        redirectTo
+    }: SaveResumeProps) => {
+        const data = await saveResume({
+            draft,
+            layoutTitles,
+            imageUrl,
+            watermark,
+            userId,
+            resumeId,
+            styles,
+            layoutName,
+            isTemplate
+        })
         if (redirectTo) {
             window.location.href = redirectTo
         }
@@ -64,9 +88,6 @@ export const Editor = () => {
             )
         }
     }
-
-    let savedLayout = data?.layout ?? []
-    const draft = data?.data ?? baseDraft
 
     if (isCandidateForm) {
         savedLayout = ['Personal Info', 'Experiences', 'Education', 'Skills', 'Certifications']
@@ -110,7 +131,9 @@ export const Editor = () => {
                                     savedLayout={savedLayout}
                                     isCandidateForm={isCandidateForm}
                                     resumeId={resumeId}
+                                    isTemplate={isTemplate}
                                     onShowPreview={onShowPreview}
+                                    defaultLayoutName={defaultLayoutName}
                                 />
                             </HydrateAtoms>
                         )}

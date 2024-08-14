@@ -33,7 +33,9 @@ export const useResumeService = () => {
         userId,
         resumeId = '',
         styles,
-        layoutName = ''
+        layoutName = '',
+        imageUrl = '',
+        isTemplate = false
     }: SaveResumeProps & { userId: string; resumeId?: string }) => {
         const { data, error } = await await supabase
             .from('resumes')
@@ -43,7 +45,8 @@ export const useResumeService = () => {
                 data: draft,
                 layout: layoutTitles,
                 layout_name: layoutName,
-                is_template: Boolean(layoutName),
+                is_template: isTemplate,
+                image: imageUrl,
                 user_id: userId,
                 ...(resumeId !== '' && { id: resumeId })
             })
