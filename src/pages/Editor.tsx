@@ -102,8 +102,6 @@ export const Editor = () => {
         return children
     }
 
-    //http://localhost:3003/editor?resumeId=87b64f89-0bf8-4544-8024-b5f7dab56712&isCandidateForm=true
-
     return (
         <>
             <Provider>

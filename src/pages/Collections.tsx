@@ -25,6 +25,7 @@ import { useAuth } from '../services/useAuth'
 import { ResumeData } from '../types'
 import { Header } from '../components/Header'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { ResumeCard } from '../components/ResumeCard'
 
 type CollectionsProps = {
     title?: string
@@ -84,30 +85,7 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
         <Grid templateColumns={{ sm: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6} w="full">
             {data?.map((resume: ResumeData) => (
                 <GridItem w="full" h={{ sm: 'auto', md: 'auto' }} key={resume.id}>
-                    <Card
-                        p="0"
-                        boxShadow="0px 3px 12px rgba(0, 0, 0, 0.09)"
-                        transition="all 0.3s ease-in-out"
-                        _hover={{
-                            transform: 'scale(1.03)',
-                            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <CardBody p="0">
-                            <AspectRatio ratio={1 / 1}>
-                                <Image alt="Cv Image" src={resume.image} objectFit="contain" height="700px" />
-                            </AspectRatio>
-                            <Text fontSize="md" p={2} fontWeight="500" color="text.secondary">
-                                {resume.layout_name}
-                            </Text>
-                        </CardBody>
-                        <CardFooter justifyContent="flex-end" p={2}>
-                            <Button variant="outline" colorScheme="primary" onClick={() => onClick(resume)} size="sm">
-                                {!isCandidateForm ? 'Edit' : 'Generate'}
-                            </Button>
-                        </CardFooter>
-                    </Card>
+                    <ResumeCard resume={resume} onClick={onClick} isCandidateForm={isCandidateForm} />
                 </GridItem>
             ))}
         </Grid>
@@ -118,7 +96,7 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
             <Container maxW="container.xl" padding="2">
                 <Flex justifyContent="space-between" alignItems="center" mb={4}>
                     <Heading mb={8} fontSize="xl">
-                        {title ?? 'CV Templates'}
+                        {title ?? 'Resume Templates'}
                     </Heading>
                     {showCreateButton && (
                         <Flex gap={2}>

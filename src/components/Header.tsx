@@ -15,6 +15,7 @@ import { useAuth } from '../services/useAuth'
 import { useAtom } from 'jotai'
 import { userAtom } from '../atom/userAtom'
 import { AuthWrapper } from './AuthWrapper'
+import { ChevronDownIcon } from '@chakra-ui/icons'
 
 type AvatarProps = {
     name: string
@@ -23,7 +24,7 @@ type AvatarProps = {
     bgColor?: string
 }
 
-const Avatar = ({ name, size = 'md', showName = false, bgColor = 'gray.300' }: AvatarProps) => {
+const Avatar = ({ name, size = 'md', showName = false, bgColor = 'gray.50' }: AvatarProps) => {
     const getInitials = (name: string) => {
         return name
             .split(' ')
@@ -35,10 +36,10 @@ const Avatar = ({ name, size = 'md', showName = false, bgColor = 'gray.300' }: A
 
     return (
         <Flex alignItems="center">
-            <ChakraAvatar name={name} size={size} bg={bgColor} getInitials={getInitials} />
+            <ChakraAvatar name={name} size={size} color="text.secondary" bg={bgColor} getInitials={getInitials} />
             {showName && (
                 <Box ml={2}>
-                    <Text fontWeight="medium" color="secondary.800" fontSize="sm">
+                    <Text fontWeight="medium" color="text.secondary" fontSize="sm">
                         {name}
                     </Text>
                 </Box>
@@ -70,30 +71,31 @@ export const Header = () => {
             alignItems="center"
             justifyContent="space-between"
         >
-            <Box>
+            <Box borderRadius="full" bg="primary.500" w="40px" h="40px" mr={4}>
                 <Link
                     onClick={() => navigate('/')}
                     _hover={{ textDecoration: 'none' }}
-                    color="primary.500"
                     fontSize="xl"
                     fontWeight="bold"
                     textAlign="center"
                     as="h1"
+                    color="white"
+                    py="4px"
                 >
-                    Resume Blast
+                    RB
                 </Link>
             </Box>
             <Box>
                 {isLoggedIn ? (
                     <Menu>
-                        <MenuButton as={Button} variant="outline">
+                        <MenuButton as={Button} variant="outline" rightIcon={<ChevronDownIcon />}>
                             <Avatar name={name} size="sm" showName />
                         </MenuButton>
-                        <MenuList fontSize="sm">
+                        <MenuList fontSize="sm" p={0}>
                             <Text
+                                bg="whitesmoke"
                                 fontWeight="medium"
-                                px={4}
-                                pb={4}
+                                p={4}
                                 textStyle="uppercase"
                                 color="secondary.800"
                                 fontSize="md"

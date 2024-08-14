@@ -45,10 +45,10 @@ app.post('/upload-resume-image', upload.single('image'), async (req, res) => {
 });
 
 app.get('/resume-image/:filename', async (req, res) => {
-  const { filename } = req.params;
-  const filepath = path.join(__dirname, 'screenshots', filename);
-
   try {
+    const { filename } = req.params;
+    const filepath = path.join(__dirname, 'screenshots', filename);
+  
     await fsPromises.access(filepath);
     res.setHeader('Content-Type', 'image/png');
     
