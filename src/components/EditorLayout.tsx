@@ -34,6 +34,7 @@ import { useGenerateImage } from '../hooks/useGenerateImage'
 import { TwoColumnLayout } from './examples/TwoColumnLayout'
 import { layoutTypeAtom } from '../atom/layoutTypeAtom'
 import { ResponsiveGridWrapper } from './ResponsiveGridWrapper'
+import { useNavigate } from 'react-router-dom'
 
 type EditorLayoutProps = {
     savedLayout: Array<string>
@@ -57,6 +58,7 @@ export const EditorLayout = ({
     isTemplate,
     defaultLayoutName
 }: EditorLayoutProps) => {
+    const navigate = useNavigate()
     const hasResumeId = Boolean(resumeId)
     const [layoutType, setLayoutType] = useAtom(layoutTypeAtom)
     const [status, setStatus] = useState<'loading' | 'done' | 'error'>('done')
@@ -137,7 +139,12 @@ export const EditorLayout = ({
         setLayoutName(value)
     }
 
-    const handleOpenEditor = (template: ResumeData) => {
+    const handleOpenEditor = (template?: ResumeData | null) => {
+        if (!template) {
+            navigate(`/editor?newtemplate=true`, { replace: true })
+            return
+        }
+
         onSave({
             draft,
             layoutTitles: template.layout,

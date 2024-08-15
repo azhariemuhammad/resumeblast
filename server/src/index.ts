@@ -12,7 +12,6 @@ dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Always point to the screenshots directory in src, regardless of environment
 const screenshotsDir = path.join(__dirname, '..', 'screenshots')
 
 const app = express()

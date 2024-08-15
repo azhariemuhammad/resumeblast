@@ -30,8 +30,30 @@ import { ResumeCard } from '../components/ResumeCard'
 type CollectionsProps = {
     title?: string
     isCandidateForm?: boolean
-    onClick?: (resume: ResumeData) => void
+    onClick?: (resume?: ResumeData | null) => void
     showCreateButton?: boolean
+}
+
+type EmptyStateProps = {
+    title: string
+    subtitle: string
+    onClick: () => void
+}
+
+const EmptyState = ({ title, subtitle, onClick }: EmptyStateProps) => {
+    return (
+        <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={6}>
+            <Heading textAlign="center" fontSize="xl">
+                {title}
+            </Heading>
+            <Text textAlign="center" as="p" fontSize="lg" variant="secondary">
+                {subtitle}
+            </Text>
+            <Button onClick={onClick} colorScheme="primary" variant="solid">
+                Create template
+            </Button>
+        </Flex>
+    )
 }
 
 const LoaderGrid = () => {
@@ -52,6 +74,7 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
     const { getAllTemplates } = useResumeService()
     const [user] = useAtom(userAtom)
     const userId = user?.id ?? ''
+    console.log({ userId })
     const { session } = useAuth()
     const showAuth = useDisclosure({ defaultIsOpen: user === null || session === null })
 
@@ -79,6 +102,18 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
 
     if (user === null || session === null) {
         return <AuthModal showAuth={showAuth.isOpen} onClose={() => window.location.reload()} />
+    }
+
+    console.log({ data })
+
+    if ((!isLoading && data === undefined) || data?.length === 0) {
+        return (
+            <EmptyState
+                title="No templates found"
+                subtitle="Create a template to continue"
+                onClick={() => onClick(null)}
+            />
+        )
     }
 
     const renderGridView = () => (
@@ -130,7 +165,11 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
 }
 
 export const CollectionsPage = () => {
-    const onClick = (resume: ResumeData) => {
+    const onClick = (resume?: ResumeData | null) => {
+        if (!resume) {
+            window.location.href = '/editor?newtemplate=true'
+            return
+        }
         window.location.href = `/editor?resumeId=${resume.id}`
     }
 

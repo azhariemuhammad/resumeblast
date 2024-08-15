@@ -43,16 +43,19 @@ export const Home = () => {
                             >
                                 Create template
                             </Button>
-                            <Text textAlign="center" as="h2" fontSize="xl" variant="secondary">
+                            <Text textAlign="center" as="p" fontSize="lg" variant="secondary">
                                 or
                             </Text>
+                            <Text textAlign="center" as="p" fontSize="lg" variant="secondary">
+                                Generate a resume for your candidate
+                            </Text>
                             <Button
-                                onClick={() => (window.location.href = '/editor?isCandidateForm=true')}
+                                onClick={() => (window.location.href = '/collections')}
                                 colorScheme="primary"
                                 variant="outline"
                                 size="md"
                             >
-                                Input candidate info
+                                Generate
                             </Button>
                         </Stack>
                     </Center>
