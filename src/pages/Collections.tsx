@@ -5,16 +5,10 @@ import {
     Skeleton,
     GridItem,
     useDisclosure,
-    Box,
     useToast,
-    Card,
-    Image,
-    CardBody,
-    CardFooter,
     Button,
     Heading,
-    Text,
-    AspectRatio
+    Text
 } from '@chakra-ui/react'
 import { useAtom } from 'jotai'
 import { userAtom } from '../atom/userAtom'
@@ -74,8 +68,7 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
     const { getAllTemplates } = useResumeService()
     const [user] = useAtom(userAtom)
     const userId = user?.id ?? ''
-    console.log({ userId })
-    const { session } = useAuth()
+    const { session, loading } = useAuth()
     const showAuth = useDisclosure({ defaultIsOpen: user === null || session === null })
 
     const { data, isLoading } = useQuery({
@@ -100,11 +93,9 @@ export const Collections = ({ isCandidateForm, title, showCreateButton, onClick 
                 })
     })
 
-    if (user === null || session === null) {
+    if (!loading && session === null) {
         return <AuthModal showAuth={showAuth.isOpen} onClose={() => window.location.reload()} />
     }
-
-    console.log({ data })
 
     if ((!isLoading && data === undefined) || data?.length === 0) {
         return (

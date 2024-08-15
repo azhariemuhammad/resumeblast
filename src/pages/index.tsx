@@ -50,7 +50,7 @@ export const Home = () => {
                                 Generate a resume for your candidate
                             </Text>
                             <Button
-                                onClick={() => (window.location.href = '/collections')}
+                                onClick={() => (window.location.href = '/editor?isCandidateForm=true')}
                                 colorScheme="primary"
                                 variant="outline"
                                 size="md"

@@ -1,5 +1,4 @@
-import React from 'react'
-import { Flex, Box, IconButton } from '@chakra-ui/react'
+import { Flex, IconButton } from '@chakra-ui/react'
 
 type Align = 'left' | 'center' | 'right'
 type AlignSwitchProps = {
