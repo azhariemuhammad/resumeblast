@@ -1,0 +1,55 @@
+name: Deploy Resumeblast to DigitalOcean Droplet
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '14.x'
+
+            - name: Install dependencies (Frontend)
+              run: npm ci
+
+            - name: Install dependencies (Backend)
+              run: |
+                  cd server
+                  npm ci
+
+            - name: Build application
+              run: |
+                  npm run build
+                  cd server && npm run build
+
+            - name: Create .env files
+              run: |
+                  echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env
+                  echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+                  echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env
+
+                  echo "BASE_URL=${{ secrets.BASE_URL }}" > server/.env
+
+            - name: Install SSH Key
+              uses: shimataro/ssh-key-action@v2
+              with:
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+            - name: Deploy to DigitalOcean Droplet
+              env:
+                  DROPLET_IP: ${{ secrets.DROPLET_IP }}
+              run: |
+                  rsync -avz --delete ./dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast
+                  rsync -avz --delete ./server/dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server
+                  rsync -avz .env root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
+                  rsync -avz server/.env root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server/
+                  ssh root@$DROPLET_IP << EOF
+                    pm2 restart resume-blast
+                  EOF
