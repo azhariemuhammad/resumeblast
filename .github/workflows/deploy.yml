@@ -41,5 +41,5 @@ jobs:
               run: |
                   eval $(ssh-agent -s)
                   ssh-add ~/.ssh/id_rsa
-                  rsync -avz --delete ./dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
-                  ssh -o StrictHostKeyChecking=no root@$DROPLET_IP "sudo systemctl reload nginx"
+                  rsync -avz --delete ./dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
+                  ssh -o StrictHostKeyChecking=no azharie@$DROPLET_IP "sudo systemctl reload nginx"
