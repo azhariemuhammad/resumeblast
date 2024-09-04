@@ -31,14 +31,15 @@ jobs:
               with:
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
-                  if_key_exists: replace
-                  config: |
-                      Host *
-                        StrictHostKeyChecking no
+
+            - name: Adding Known Hosts
+              run: ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
             - name: Deploy to DigitalOcean Droplet
               env:
                   DROPLET_IP: ${{ secrets.DROPLET_IP }}
               run: |
+                  eval $(ssh-agent -s)
+                  ssh-add ~/.ssh/id_rsa
                   rsync -avz --delete ./dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
                   ssh -o StrictHostKeyChecking=no root@$DROPLET_IP "sudo systemctl reload nginx"
