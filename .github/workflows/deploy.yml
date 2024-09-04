@@ -40,10 +40,10 @@ jobs:
               env:
                   DROPLET_IP: ${{ secrets.DROPLET_IP }}
               run: |
-                  rsync -avz --delete ./dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast
-                  rsync -avz --delete ./server/dist/ root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server
-                  rsync -avz .env root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
-                  rsync -avz server/.env root@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server/
-                  ssh root@$DROPLET_IP << EOF
+                  rsync -avz --delete ./dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast
+                  rsync -avz --delete ./server/dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server
+                  rsync -avz .env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
+                  rsync -avz server/.env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server/
+                  ssh azharie@$DROPLET_IP << EOF
                     pm2 restart resume-blast
                   EOF
