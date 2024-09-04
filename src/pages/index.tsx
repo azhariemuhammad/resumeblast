@@ -41,7 +41,7 @@ export const Home = () => {
                                 size="lg"
                                 rightIcon={<ArrowForwardIcon />}
                             >
-                                Create template
+                                Create template test
                             </Button>
                             <Text textAlign="center" as="p" fontSize="lg" variant="secondary">
                                 or
