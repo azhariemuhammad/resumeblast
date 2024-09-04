@@ -35,17 +35,19 @@ jobs:
               with:
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
-            - name: Set SSH key permissions
+            - name: Set correct permissions on SSH key
               run: chmod 600 $HOME/.ssh/id_rsa
-            - name: Debug SSH key
-              run: |
-                  ls -la ~/.ssh
-                  ssh-add -l
-                  cat ~/.ssh/id_rsa.pub
+
+            - name: Start ssh-agent
+              run: eval $(ssh-agent -s)
+
+            - name: Add SSH key to agent
+              run: ssh-add $HOME/.ssh/id_rsa
+
             - name: Test SSH connection
               env:
                   DROPLET_IP: ${{ secrets.DROPLET_IP }}
-              run: ssh -vvv azharie@$DROPLET_IP exit
+              run: ssh -o StrictHostKeyChecking=no azharie@$DROPLET_IP exit
             - name: Deploy to DigitalOcean Droplet
               env:
                   DROPLET_IP: ${{ secrets.DROPLET_IP }}
