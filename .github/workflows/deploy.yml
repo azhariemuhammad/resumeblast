@@ -35,15 +35,15 @@ jobs:
               with:
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
+            - name: Set SSH key permissions
+              run: chmod 600 $HOME/.ssh/id_rsa
             - name: Deploy to DigitalOcean Droplet
               env:
                   DROPLET_IP: ${{ secrets.DROPLET_IP }}
               run: |
-                  rsync -avz --delete ./dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast
-                  rsync -avz --delete ./server/dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server
-                  rsync -avz .env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/
-                  rsync -avz server/.env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server/
-                  ssh azharie@$DROPLET_IP << EOF
-                    pm2 restart resume-blast
-                  EOF
+                  set -e
+                  rsync -avz --delete ./dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast || exit 1
+                  rsync -avz --delete ./server/dist/ azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server || exit 1
+                  rsync -avz .env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/ || exit 1
+                  rsync -avz server/.env azharie@$DROPLET_IP:/var/www/deploy-service/sites/resume-blast/server/ || exit 1
+                  ssh azharie@$DROPLET_IP "pm2 restart resume-blast" || exit 1
