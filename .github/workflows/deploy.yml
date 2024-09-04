@@ -31,6 +31,10 @@ jobs:
               with:
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
+                  if_key_exists: replace
+                  config: |
+                      Host *
+                        StrictHostKeyChecking no
 
             - name: Deploy to DigitalOcean Droplet
               env:
